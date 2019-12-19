@@ -8,4 +8,4 @@ So the design and approach of this project is to emphasize simplicity and approa
 4. Cover the basics first. If you make a feature request for a something like a touchscreen or wifi before I can make a solid cup of coffee, expect me to ignore it until later. I believe in simplicity first. However, this is an open project so if you want to add that in a branch, go for it.
 5. Communication. I will do my best to convey the reasons behind my decisions as I go. I am sure I will make some mistakes, so please do your best to reciprocate in a constructive manner.
 
-Keep tabs on the everyday progress of this project at https://tipsybrew.com/tags/pourover/. Project code and models will be stored here on GitHub though.
+Keep tabs on the everyday progress of this project at [TipsyBrew](https://tipsybrew.com/tags/pourover/). Project code and models will be stored here on GitHub though.
