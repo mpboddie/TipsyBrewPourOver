@@ -39,7 +39,8 @@ void loop() {
   lcd.setCursor(0, 1);
 
   keypad_in = analogRead(0);
-  button_pressed = (keypad_in != keypad_old) ? true : false;
+  // The value of keypad_in can jump around a point, so I put in a 10 point buffer
+  button_pressed = (abs(keypad_in - keypad_old) > 10) ? true : false;
   
   // My approximate values, I assume it may vary
   // No buttons pressed = 1023
