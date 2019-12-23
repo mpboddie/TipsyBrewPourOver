@@ -55,5 +55,21 @@ void loop() {
     clearLine(1);
     lcd.print("A0: ");
     lcd.print(keypad_in);
+    // I kept the above output defaulted because it is handier for determining your key values, however if want prettier output, use the code below
+    /*
+    if (keypad_in > 875) {
+      lcd.print("None");
+    } else if (keypad_in > 600) {
+      lcd.print("Select Pressed");
+    } else if (keypad_in > 400) {
+      lcd.print("Left Pressed");
+    } else if (keypad_in > 200) {
+      lcd.print("Down Pressed");
+    } else if (keypad_in > 75) {
+      lcd.print("Up Pressed");
+    } else {
+      lcd.print("Right Pressed");
+    }
+    */
   }
 }
