@@ -9,3 +9,6 @@ So the design and approach of this project is to emphasize simplicity and approa
 5. Communication. I will do my best to convey the reasons behind my decisions as I go. I am sure I will make some mistakes, so please do your best to reciprocate in a constructive manner.
 
 Keep tabs on the everyday progress of this project at [TipsyBrew](https://tipsybrew.com/tags/pourover/). Project code and models will be stored here on GitHub though.
+
+## earlyPhase.ino
+This is the exact code that the Phase 0.5 demonstration used. There are some slight issues with this, but nothing that prevents a cup of coffee from being made. I would have preferred to hold it back for some polishing before putting it up here, but I am trying to fight those instincts and make this as public as possible. As always, check [TipsyBrew](https://tipsybrew.com/tags/pourover/) for the 0.5 demonstration and related news.
