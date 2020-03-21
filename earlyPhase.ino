@@ -61,17 +61,15 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 // ### Keypad definitions ###
 
-const byte ROWS = 4; 
-const byte COLS = 4; 
+const byte ROWS = 2; 
+const byte COLS = 3; 
 
 char keys[ROWS][COLS] = {
-  {'D','P','0','S'},
-  {'C','9','8','7'},
-  {'B','6','5','4'},
-  {'A','3','2','1'}
+  {'C','L','U'},
+  {'D','S','R'}
 };
-byte rowPins[ROWS] = {3, 2, 1, 0}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
+byte rowPins[ROWS] = {7, 6}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {3, 4, 5}; //connect to the column pinouts of the keypad
 
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
@@ -84,9 +82,10 @@ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 // ### SPOOOOOOOOOOON... definitions ###
 
-#define spoonPin 7
+#define spoonPin 13
 Servo servo;
-int angle = 0;
+int spoonIn = 108;
+int spoonOut = 75;
 
 // ### Functions ###
 
@@ -184,27 +183,21 @@ void setup() {
 
   // Turn off motors - Initial state
   stopPump();
-
-  servo.attach(spoonPin);
   
   // Title screen... completely unecessary
-  /*display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.println(F("TipsyBrew"));
-  display.setTextSize(1);
-  display.println(F("Pour Over Phase 0.5"));
-  display.println(F("---"));
-  //display.println(F("Fuck you Tipsy"));
-  display.display();*/
-  
   display.clearDisplay();
   // Display bitmap
   display.drawBitmap(0, 0,  TipsyBrew, 128, 64, WHITE);
   display.display();
   delay(5000);
 
+  servo.attach(spoonPin);
+  servo.write(spoonIn);
+  delay(3000);
+  servo.write(spoonOut);
+  delay(1000);
+  servo.detach();
+  
   display.clearDisplay();
   
   // Intro
@@ -255,14 +248,14 @@ void loop() {
         display.print(((weightRead*coffeeRatio) - (weightRead*waterLoss)), 1);
         display.println(F(" ml")); 
         display.println(F(" "));
-        display.println(F("Press A to tare"));
-        display.println(F("Press * to Brew"));
+        display.println(F("Press UP to tare"));
+        display.println(F("COFFEE NOW to Brew"));
         display.display();  
       }
-      if ( key == 'A' ) {
+      if ( key == 'U' ) {
         // Tare the scale with the A button
         scale.tare();
-      } else if ( key == 'S' ) {
+      } else if ( key == 'C' ) {
         // Start the brew with the * button
         appMode = APP_CONFIRM_START;
         display.clearDisplay();
@@ -273,15 +266,15 @@ void loop() {
         display.print(((weightRead*coffeeRatio) - (weightRead*waterLoss)), 1);
         display.println(F(" ml of coffee"));
         display.println(F(" "));
-        display.println(F("Are you sure you"));
-        display.println(F("want to continue?"));
-        display.println(F("1=cont any=cancel"));
+        display.println(F("Are you sure?"));
+        display.println(F("Select to Continue"));
+        display.println(F("Any key to Cancel"));
         display.display();
       }
       break;
     case APP_CONFIRM_START :
       // Confirm start with the 1 button
-      if ( key == '1' ) {
+      if ( key == 'S' ) {
         groundWeight = weightRead;
         appMode = APP_BLOOM;
         display.clearDisplay();
@@ -300,13 +293,30 @@ void loop() {
       display.println(F("Do not touch brewer"));
       display.display();
       scale.tare(); // weight from this point on is water dispensed only
+      
+      servo.attach(spoonPin);
+      servo.write(spoonOut);
+      delay(1000);
+      servo.detach();
       pumpSpeed(155);
+      runPump();
+      while (scale.get_units() < groundWeight) {
+        // possibly display weight to the user, but do they really care?
+        // just do nothing for now
+      }
+      stopPump();
+      
+      servo.attach(spoonPin);
+      servo.write(spoonIn);
+      delay(1000);
+      servo.detach();
       runPump();
       while (scale.get_units() < (2*groundWeight)) {
         // possibly display weight to the user, but do they really care?
         // just do nothing for now
       }
       stopPump();
+      
       delay(1000);
       display.clearDisplay();
       display.setTextSize(1);
@@ -341,7 +351,7 @@ void loop() {
           display.println(F("Brewing Cycle!!!"));
           display.println(F("Do not touch the brewer"));
           display.print(scale.get_units(), 1);
-          display.println(" g dispensed");
+          display.println("g dispensed");
           display.display();
           runPump();
         }
