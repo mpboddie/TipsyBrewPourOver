@@ -6,7 +6,7 @@
 // - Load cell with HX711 amplifier
 // - Diaphragm pump (12v) with L298N driver
 // - SSD1306 OLED display (128x64)
-// - Keypad 4x4
+// - Keypad 2x3
 // Initially this is going to have a limited feature set. You may find it pretty
 // rigid and mostly hard coded, however I've had a lot of odd fluke like setbacks
 // so I just want to get this thing making a cup of coffee.
@@ -80,10 +80,16 @@ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 #define in1 9
 #define in2 10
 
+// Pump speeds
+#define BLOOM_SPEED 120
+#define BREW_SPEED 120
+
 // ### SPOOOOOOOOOOON... definitions ###
 
 #define spoonPin 13
 Servo servo;
+// The following is the servo position for the spoon in and out of the water path
+// You will most likely customize these
 int spoonIn = 108;
 int spoonOut = 75;
 
@@ -162,6 +168,10 @@ const unsigned char TipsyBrew [] PROGMEM = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+// Timing variables
+unsigned long startMillis;
+unsigned long currentMillis;
+
 void setup() {
   Serial.begin(9600);
 
@@ -189,11 +199,14 @@ void setup() {
   // Display bitmap
   display.drawBitmap(0, 0,  TipsyBrew, 128, 64, WHITE);
   display.display();
-  delay(5000);
+  startMillis = millis();
+  while( millis() - startMillis < 5000 ) {
+    if ( keypad.getKey() ) break;
+  }
 
   servo.attach(spoonPin);
   servo.write(spoonIn);
-  delay(3000);
+  delay(1000);
   servo.write(spoonOut);
   delay(1000);
   servo.detach();
@@ -296,9 +309,7 @@ void loop() {
       
       servo.attach(spoonPin);
       servo.write(spoonOut);
-      delay(1000);
-      servo.detach();
-      pumpSpeed(155);
+      pumpSpeed(BLOOM_SPEED);
       runPump();
       while (scale.get_units() < groundWeight) {
         // possibly display weight to the user, but do they really care?
@@ -306,16 +317,14 @@ void loop() {
       }
       stopPump();
       
-      servo.attach(spoonPin);
       servo.write(spoonIn);
-      delay(1000);
-      servo.detach();
       runPump();
       while (scale.get_units() < (2*groundWeight)) {
         // possibly display weight to the user, but do they really care?
         // just do nothing for now
       }
       stopPump();
+      servo.detach();
       
       delay(1000);
       display.clearDisplay();
@@ -332,10 +341,14 @@ void loop() {
       appMode = APP_BREW;
       break;
     case APP_BREW :
-      pumpSpeed(125);
+      pumpSpeed(BREW_SPEED);
       // For loop dispense 150 ml of water or amount remaining then wait (150 is an arbitrary number that I *think* will not overflow the cone)
       float waterRound = scale.get_units();
       bool complete = false;
+      servo.attach(spoonPin);
+      int spoonAt = spoonIn;
+      servo.write(spoonAt);
+      startMillis = millis();
       while (scale.get_units() < (coffeeRatio * groundWeight)) { // run until we have pumped the needed water
         float waterLeft = (coffeeRatio * groundWeight) - scale.get_units();
         if ( waterLeft > 150 ) {
@@ -353,9 +366,24 @@ void loop() {
           display.print(scale.get_units(), 1);
           display.println("g dispensed");
           display.display();
+          if ( (millis() - startMillis) > 500 ) {
+            startMillis = millis();
+            if (spoonAt == spoonIn) {
+              spoonAt = spoonIn - 6;
+              servo.write(spoonAt); 
+            } else if (spoonAt < spoonIn) {
+              spoonAt = spoonIn + 6;
+              servo.write(spoonAt);
+            } else if (spoonAt > spoonIn) {
+              spoonAt = spoonIn - 6;
+              servo.write(spoonAt);
+            }
+          }
           runPump();
         }
         stopPump();
+        spoonAt = spoonIn;
+        servo.write(spoonAt);
         if ( complete ) {
           appMode = APP_BREW_COMPLETE;
         } else {
