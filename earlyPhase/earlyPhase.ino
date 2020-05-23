@@ -17,7 +17,7 @@
 #include <Adafruit_SSD1306.h>
 #include <Keypad.h>
 #include "HX711.h"
-#include <Servo.h>
+#include "ServoEasing.h"
 #include "triggy.h"
 #include "earlyLibs.h"
 #include "screens.h"
