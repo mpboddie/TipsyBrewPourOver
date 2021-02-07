@@ -38,3 +38,12 @@ void displayServoTest(int angle, int distance) {
   display.println(distance);
   display.display();
 }
+
+void displayMessage(char *message) {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println(message);
+  display.display();
+}

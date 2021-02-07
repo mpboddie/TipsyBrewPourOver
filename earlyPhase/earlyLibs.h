@@ -43,8 +43,13 @@ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 #define anglePin 22
 #define distancePin 23
 
-Servo angleServo;
-Servo distanceServo;
+ServoEasing angleServo;
+ServoEasing distanceServo;
+
+// ### Kettle kontrol ###
+#define kettlePin 24
+
+ServoEasing kettleServo;
 
 // This is the logo used at start up... It is beautiful!!!
 const unsigned char TipsyBrew [] PROGMEM = {
