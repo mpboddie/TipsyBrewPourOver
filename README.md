@@ -1,4 +1,4 @@
-# TipsyBrew Pour Over Edition
+# TipsyBrew Pour Over Robot (POR for short)
 This is an exploratory/educational project that will attempt to tackle a few basic tasks of brewing a damn good cup of coffee.
 
 So the design and approach of this project is to emphasize simplicity and approachability. The basic problems being solved here could be done many ways, but I am going to approach it with these priciples:
@@ -11,4 +11,7 @@ So the design and approach of this project is to emphasize simplicity and approa
 Keep tabs on the everyday progress of this project at [TipsyBrew](https://tipsybrew.com/tags/pourover/). Project code and models will be stored here on GitHub though.
 
 ## earlyPhase.ino
-This is the exact code that the Phase 0.5 demonstration used. There are some slight issues with this, but nothing that prevents a cup of coffee from being made. I would have preferred to hold it back for some polishing before putting it up here, but I am trying to fight those instincts and make this as public as possible. As always, check [TipsyBrew](https://tipsybrew.com/blog/2020-03-01-success-first-cup-video/) for the 0.5 demonstration and related news on the [pour over project](https://tipsybrew.com/projects).
+This is the exact code that the Phase 0.5 demonstration used. There are some slight issues with this, but nothing that prevents a cup of coffee from being made. I would have preferred to hold it back for some polishing before putting it up here, but I am trying to fight those instincts and make this as public as possible. As always, check [TipsyBrew](https://tipsybrew.com/blog/2020-03-01-success-first-cup-video/) for the 0.5 demonstration and related news on the [pour over project](https://tipsybrew.com/projects). Early Phase was kind of like the moon shot code to demonstrate that the POR would work. It is still being used to make coffee daily to fuel Tipsy during mkII progress, but it is not long for this world.
+
+## Mk II has begun
+Mark II of the POR is aimed towards a complete kit for others to build. That means I am trying to create a stable design. At the moment of writing it will be the leading edge design, but once completed I will do my best to heavily document it and hopefully a community will grow with it.
