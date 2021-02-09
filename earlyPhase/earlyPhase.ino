@@ -17,7 +17,7 @@
 #include <Adafruit_SSD1306.h>
 #include <Keypad.h>
 #include "HX711.h"
-#include <Servo.h>
+#include "ServoEasing.h"
 #include "triggy.h"
 #include "earlyLibs.h"
 #include "screens.h"
@@ -47,7 +47,7 @@ const float waterLoss = 1.995;  // This is used to calculate the amount of water
 // left to right is referred to as the X
 //const int leftAngle = 88;   // servo setting to set arm to the human's far left perspective
 //const int rightAngle = 124; // servo setting to set arm to the human's far right perspective
-#define MID_ANGLE 93  // This should be 90 on a 180 degree servo... but sometimes shit happens and the worlds don't align
+#define MID_ANGLE 94  // This should be 90 on a 180 degree servo... but sometimes shit happens and the worlds don't align
 
 // front to back is referred to as the Y
 const int frontDistance = 5; // servo setting to set arm to the human's far front perspective
@@ -65,12 +65,17 @@ pourCoord bloomSpots[NUM_BLOOM_SPOTS];
 // Radius defines the max radius of the brew circle
 // Distance is the servo arm distance to the center of the brewer, assuming the arm is also angle center
 #define BREW_RADIUS 60
-#define BREW_DISTANCE 92.5
+#define BREW_DISTANCE 102.5
 #define BREW_RESOLUTION 20  // must divide 360 evenly
 pourCoord brewSpots[BREW_RESOLUTION];
 
+// Kettle values
+#define KETTLE_ON 74
+#define KETTLE_NEUTRAL 50
+#define KETTLE_OFF 32
+
 // Turns on a servo test during the startup screen
-const bool servoTest = true;
+const bool servoTest = false;
 // debug flag
 const bool debug = false;
 
@@ -78,7 +83,7 @@ const bool debug = false;
 // I STRONGLY SUGGEST you start small and work your way up if you so choose on cone limit.
 // This limits the number of ml dispensed during a brew cycle before pausing for a drawdown.
 // Let me say it another way, if you increase this too much HOT WATER WILL OVERFLOW making a huge mess in the best case scenario.
-const int coneLimit = 250;
+const int coneLimit = 225;
 
 // ### Functions and variable initialization ###
 
@@ -150,7 +155,7 @@ void setup() {
     Serial.print(i);
     double distance = SASdistance(BREW_DISTANCE, BREW_RADIUS, i*angleIncrement);
     double angle = SSAngle(BREW_RADIUS, i*angleIncrement, distance) + MID_ANGLE;
-    distance = reverseDistance(distance);
+    //distance = reverseDistance(distance);
     brewSpots[i] = {(int)angle, (int)distance};
     
     Serial.print(F(" - ("));
@@ -172,7 +177,7 @@ void setup() {
     }
   }
 
-  int bloomRadius = 20;
+  int bloomRadius = 30;
   angleIncrement = 360/NUM_BLOOM_SPOTS;
   for (int i=0; i<NUM_BLOOM_SPOTS; i++) {
     double distance = SASdistance(BREW_DISTANCE, bloomRadius, i*angleIncrement);
@@ -185,8 +190,13 @@ void setup() {
     Serial.println(F("Servo Test"));
     // servo test cycle
     angleIncrement = 360/BREW_RESOLUTION;
-    angleServo.attach(anglePin, 1000, 2000);
-    distanceServo.attach(distancePin, 1000, 2000);
+    angleServo.attach(anglePin, 1300, 1700);
+    distanceServo.attach(distancePin);
+    angleServo.setSpeed(10);
+    distanceServo.setSpeed(70);
+    distanceServo.write(93);
+    angleServo.write(93);
+    delay(3000);
     for (int i=0; i < BREW_RESOLUTION; i++) {
       Serial.print(i*angleIncrement);
       Serial.print(F(" - ("));
@@ -194,21 +204,43 @@ void setup() {
       Serial.print(F(", "));
       Serial.print(brewSpots[i].distance, 1);
       Serial.println(F(")"));
-      distanceServo.write(brewSpots[i].distance);
-      angleServo.write(brewSpots[i].angle);
-      
-      brewPosition++;
-      delay(500);
+      distanceServo.startEaseTo(brewSpots[i].distance);
+      angleServo.startEaseTo(brewSpots[i].angle);
+      synchronizeAllServosAndStartInterrupt();
+      while(distanceServo.isMoving() || angleServo.isMoving()) {
+        if ( distanceServo.isMoving() ) {
+          Serial.print(F("Distance "));
+        }
+        if ( angleServo.isMoving() ) {
+          Serial.print(F("Angle"));
+        }
+        Serial.println(F(" "));
+      }
+    }
+    distanceServo.startEaseTo(brewSpots[0].distance);
+    angleServo.startEaseTo(brewSpots[0].angle);
+    synchronizeAllServosAndStartInterrupt();
+    while(distanceServo.isMoving() || angleServo.isMoving()) {
+      if ( distanceServo.isMoving() ) {
+        Serial.print(F("Distance "));
+      }
+      if ( angleServo.isMoving() ) {
+        Serial.print(F("Angle"));
+      }
+      Serial.println(F(" "));
     }
     angleServo.detach();
     distanceServo.detach();
+    Serial.print(F("Done with Servo Test"));
   }
+
+  startKettle();
   
   // Make sure the pour spout is out of the way for convenient dead bean loading
   angleServo.attach(anglePin, 1000, 2000);
-  distanceServo.attach(distancePin, 1000, 2000);
+  distanceServo.attach(distancePin);
   angleServo.write(MID_ANGLE);
-  distanceServo.write(backDistance);
+  distanceServo.write(frontDistance);
   delay(500);
   distanceServo.detach();
   angleServo.detach();
@@ -250,7 +282,7 @@ void loop() {
           currentAngle = 90;
           currentDistance = 90;
           angleServo.attach(anglePin, 1000, 2000);
-          distanceServo.attach(distancePin, 1000, 2000);
+          distanceServo.attach(distancePin);
           angleServo.write(currentAngle);
           distanceServo.write(currentDistance);
           delay(100);
@@ -270,7 +302,7 @@ void loop() {
       if (key == 'U') {
         if (currentDistance < 180) {
           currentDistance++;
-          distanceServo.attach(distancePin, 1000, 2000);
+          distanceServo.attach(distancePin);
           distanceServo.write(currentDistance);
           delay(100);
           distanceServo.detach();
@@ -278,7 +310,7 @@ void loop() {
       } else if (key == 'D') {
         if (currentDistance > 0) {
           currentDistance--;
-          distanceServo.attach(distancePin, 1000, 2000);
+          distanceServo.attach(distancePin);
           distanceServo.write(currentDistance);
           delay(100);
           distanceServo.detach();
@@ -323,7 +355,7 @@ void loop() {
         pourCoord filterRinse[filterResolution];
         drawCircle(50, filterResolution, BREW_DISTANCE, MID_ANGLE, filterRinse);
         angleServo.attach(anglePin, 1000, 2000);
-        distanceServo.attach(distancePin, 1000, 2000);
+        distanceServo.attach(distancePin);
         pumpSpeed(BREW_SPEED);
         runPump();
         for(int i = 0; i < filterResolution; i++) {
@@ -424,7 +456,7 @@ void loop() {
 
       // To start the bloom put the spout dead center
       angleServo.attach(anglePin, 1000, 2000);
-      distanceServo.attach(distancePin, 1000, 2000);
+      distanceServo.attach(distancePin);
       angleServo.write(MID_ANGLE);
       distanceServo.write(BREW_DISTANCE);
       delay(500);
@@ -444,7 +476,7 @@ void loop() {
       brewPosition = 0;
       bloomTimer = 0;
       angleServo.attach(anglePin, 1000, 2000);
-      distanceServo.attach(distancePin, 1000, 2000);
+      distanceServo.attach(distancePin);
       runPump();
       while (scale.get_units() < (2*groundWeight)) {
         if ( millis() >= bloomTimer + ARM_SPEED ) {
@@ -471,7 +503,7 @@ void loop() {
 
       // Adjust spout to center
       angleServo.attach(anglePin, 1000, 2000);
-      distanceServo.attach(distancePin, 1000, 2000);
+      distanceServo.attach(distancePin);
       currentAngle = (int) MID_ANGLE;
       currentDistance = (int) BREW_DISTANCE;
       angleServo.write(currentAngle);
@@ -502,7 +534,7 @@ void loop() {
         unsigned long lastMove = startMillis;
         
         angleServo.attach(anglePin, 1000, 2000);
-        distanceServo.attach(distancePin, 1000, 2000);
+        distanceServo.attach(distancePin);
         
         while ( waterLeft > (scale.get_units() - waterRound) ) {
           startMillis = millis();
@@ -592,4 +624,22 @@ void stopPump() {
 
 void pumpSpeed(byte dcSpeed) {
   analogWrite(enA, dcSpeed);
+}
+
+void startKettle() {
+  kettleServo.attach(kettlePin);
+  kettleServo.write(KETTLE_ON);
+  delay(1000);
+  kettleServo.write(KETTLE_NEUTRAL);
+  delay(1000);
+  kettleServo.detach();
+}
+
+void stopKettle() {
+  kettleServo.attach(kettlePin);
+  kettleServo.write(KETTLE_OFF);
+  delay(1000);
+  kettleServo.write(KETTLE_NEUTRAL);
+  delay(1000);
+  kettleServo.detach();
 }
