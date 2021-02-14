@@ -187,7 +187,7 @@ void LeftLower() {
       // do nothing
       break;
     case APP_HOME :
-      // do nothing
+      homeLeftLower();
       break;
   }
 }

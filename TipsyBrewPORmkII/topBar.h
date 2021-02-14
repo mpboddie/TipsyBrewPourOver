@@ -29,3 +29,9 @@ void printTime() {
   tft.setTextColor(GREY_GRAY);
   tft.drawCentreString(char_array, tft.width()/2, 1, 4);
 }
+
+void topBarHomeScreen() {
+  tft.fillRect(0, 0, 99, 25, BKGD);
+  tft.drawBitmap(0, 0, homeSmall, 25, 25, GREY_GRAY);
+  tft.drawString("Home", 25, ((25 - tft.fontHeight(2))/2), 2);
+}

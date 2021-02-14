@@ -18,40 +18,56 @@
  * Little buttons are just 50px wide and only consist of the icon items and location from the Big buttons.
  */
  
-#define LEFT_COL    1
-#define RIGHT_COL   2
-#define TOP         3
-#define BOTTOM      4
+#define LEFT_ON     1
+#define RIGHT_ON    2
+#define LEFT_OFF    3
+#define RIGHT_OFF   4
+#define TOP         5
+#define BOTTOM      6
 
-#define LITTLE_WIDTH    50
-#define BUTTON_HEIGHT   80
-#define CORNER_RADIUS   5
-#define TOP_START       38
-#define BOTTOM_START    120
+#define LITTLE_WIDTH          50
+#define BUTTON_HEIGHT         80
+#define CORNER_RADIUS         5
+#define BUTTON_TOP_PADDING    2  
+#define BUTTON_SIDE_PADDING   2
 
 int littleXcoord(int positionX) {
-  if (positionX == LEFT_COL) {
-    positionX = 0; 
-  } else {
-    positionX = tft.width() - LITTLE_WIDTH;
+  switch(positionX) {
+    case LEFT_OFF :
+      positionX = 0;
+      break;
+    case RIGHT_OFF :
+      positionX = tft.width() - LITTLE_WIDTH;
+      break;
+    case LEFT_ON :
+      positionX = (tft.width() / 2) - BUTTON_SIDE_PADDING - LITTLE_WIDTH;
+      break;
+    case RIGHT_ON :
+      positionX = (tft.width() / 2) + BUTTON_SIDE_PADDING;
+      break;
   }
   return positionX;
 }
 
 int Ycoord(int positionY) {
   if (positionY == TOP) {
-    positionY = TOP_START;
+    positionY = (tft.height() / 2) - BUTTON_HEIGHT - BUTTON_TOP_PADDING;
   } else {
-    positionY = BOTTOM_START;
+    positionY = (tft.height() / 2) + BUTTON_TOP_PADDING;
   }
   return positionY;
 }
 
 int bigXcoord(int positionX) {
-  if (positionX == LEFT_COL) {
-    positionX = LITTLE_WIDTH - CORNER_RADIUS;
-  } else {
-    positionX = (tft.width() / 2) + 1;
+  switch (positionX) {
+    case LEFT_OFF :
+    case LEFT_ON :
+      positionX = 0;
+      break;
+    case RIGHT_OFF :
+    case RIGHT_ON :
+      positionX = (tft.width() / 2) + BUTTON_SIDE_PADDING;
+      break; 
   }
   return positionX;
 }
@@ -76,14 +92,16 @@ void drawBigButton( int positionX,
                     uint16_t titleColor,
                     uint16_t titleBGcolor,
                     const char *caption = "null") {
-  tft.fillRoundRect(bigXcoord(positionX), Ycoord(positionY), (tft.width()/2) - (LITTLE_WIDTH - CORNER_RADIUS), BUTTON_HEIGHT, CORNER_RADIUS, titleBGcolor);
+  tft.fillRoundRect(bigXcoord(positionX), Ycoord(positionY), (tft.width() / 2) - BUTTON_SIDE_PADDING, BUTTON_HEIGHT, CORNER_RADIUS, titleBGcolor);
   tft.setTextColor(titleColor);
+  int titleBuffer = 0;
+  if (positionX == LEFT_OFF || positionX == RIGHT_ON) { titleBuffer = LITTLE_WIDTH; }
   if (caption == "null") {
-    tft.drawString(title, bigXcoord(positionX)+10, Ycoord(positionY)+((BUTTON_HEIGHT-tft.fontHeight(4))/2), 4);
+    tft.drawString(title, bigXcoord(positionX)+titleBuffer+10, Ycoord(positionY)+((BUTTON_HEIGHT-tft.fontHeight(4))/2), 4);
   } else {
     int padding = (BUTTON_HEIGHT-tft.fontHeight(4)-tft.fontHeight(2)-5)/2;
-    tft.drawString(title, bigXcoord(positionX)+10, Ycoord(positionY)+padding, 4);
-    tft.drawString(caption, bigXcoord(positionX)+10, Ycoord(positionY)+padding+tft.fontHeight(4)+5, 2);
+    tft.drawString(title, bigXcoord(positionX)+titleBuffer+10, Ycoord(positionY)+padding, 4);
+    tft.drawString(caption, bigXcoord(positionX)+titleBuffer+10, Ycoord(positionY)+padding+tft.fontHeight(4)+5, 2);
   }
   drawLittleButton(positionX, positionY, icon, iconColor, iconBGcolor);
 }
