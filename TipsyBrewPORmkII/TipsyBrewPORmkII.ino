@@ -2,9 +2,11 @@
 #include <BlynkSimpleWifi.h>      // blynk mobile apps
 #include "HX711.h"                // weight sensors
 #include <arduino-timer.h>        // asynchronous timers
-#include <TFT_ILI9341.h>          //  https://github.com/Bodmer/TFT_ILI9341
+#include <TFT_ILI9341.h>          // https://github.com/Bodmer/TFT_ILI9341
 #include <NTPClient.h>            // Accessing the series of tube to look at a sun dial
 #include <WiFiUdp.h>              // NTP uses UDP, but not ABC or XYZ
+#include <OneWire.h>              // Used by the following...
+#include <DallasTemperature.h>    // Temp sensors are on OneWire bus
 
 #include "userSettings.h"        // User configurable settings
 #include "sprites.h"
@@ -33,6 +35,8 @@
 #define LEFT_DOWN                   19
 #define RIGHT_UP                    20
 #define RIGHT_DOWN                  21
+// One-wire bus (used by temp sensor)
+#define ONE_WIRE                    11
 
 // WiFi setup
 #define AT_BAUD_RATE 115200
@@ -54,8 +58,14 @@ float coneWeight;
 float blynkPotW = 0;
 float blynkConeW = 0;
 
-// initialize a timer
-auto timer = timer_create_default();
+// initialize timers
+auto preHeatTimer = timer_create_default();
+
+// initialize temp sensor
+OneWire oneWire(ONE_WIRE);
+DallasTemperature sensors(&oneWire);
+float kettleTemp = 0;
+float kettleTempBuff = 0;
 
 #define NOT_READY       1
 #define IN_PROCESS      2
@@ -145,6 +155,10 @@ void setup() {
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
 
+  // Temp sensor init
+  sensors.begin();
+  sensors.setResolution(9);
+  
   printTime();
   clearLoadingText();
   fadeOutLoading();
@@ -246,7 +260,9 @@ void loop() {
   if (!topBarTime.equals(getShortFormattedTime())) {
     printTime();
   }
-  timer.tick();
+  preHeatTimer.tick();
+  sensors.requestTemperatures();
+  kettleTemp = sensors.getTempCByIndex(0);
   switch (appMode)
   {
     case APP_INTRO_SCREEN :
@@ -264,6 +280,13 @@ void loop() {
         Blynk.virtualWrite(V6, potWeight);
         blynkPotW = potWeight;
       }
+      if (kettleTempBuff != kettleTemp) {
+        kettleTempBuff = kettleTemp;
+        footerPrintTemp();
+      }
       break;
+  }
+  if(preHeatStatus) {
+    // check boiler temp, turn it on if it needs heat
   }
 }
