@@ -32,6 +32,15 @@ void printTime() {
 
 void topBarHomeScreen() {
   tft.fillRect(0, 0, 99, 25, BKGD);
-  tft.drawBitmap(0, 0, homeSmall, 25, 25, GREY_GRAY);
-  tft.drawString("Home", 25, ((25 - tft.fontHeight(2))/2), 2);
+  tft.drawBitmap(3, 0, homeSmall, 25, 25, GREY_GRAY);
+  tft.drawString("Home", 28, ((25 - tft.fontHeight(2))/2), 2);
+}
+
+void footerPrintTemp() {
+  tft.fillRect(0, tft.height() - 25, tft.width()/2, 25, BKGD);
+  char str[14];
+  dtostrf(kettleTemp, 3, 1, str);
+  strcat(str, " deg C");
+  tft.setTextColor(MOSTLY_WHITE);
+  tft.drawString(str, 3, tft.height() - 25 + ((25-tft.fontHeight(2))/2), 2);
 }
