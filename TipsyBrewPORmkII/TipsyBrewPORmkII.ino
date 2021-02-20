@@ -7,6 +7,7 @@
 #include <WiFiUdp.h>              // NTP uses UDP, but not ABC or XYZ
 #include <OneWire.h>              // Used by the following...
 #include <DallasTemperature.h>    // Temp sensors are on OneWire bus
+#include "ServoEasing.h"          // Servo for kettle
 
 #include "userSettings.h"        // User configurable settings
 #include "sprites.h"
@@ -37,7 +38,9 @@
 #define RIGHT_DOWN                  21
 // One-wire bus (used by temp sensor)
 #define ONE_WIRE                    11
-
+// Servo pins
+#define KETTLE_SWITCH_PIN           25
+           
 // WiFi setup
 #define AT_BAUD_RATE 115200
 WiFiUDP ntpUDP;
@@ -66,6 +69,12 @@ OneWire oneWire(ONE_WIRE);
 DallasTemperature sensors(&oneWire);
 float kettleTemp = 0;
 float kettleTempBuff = 0;
+unsigned long kettleOnEvent = 0;
+unsigned long kettleOffEvent = millis();
+
+// Kettle switch
+Servo kettleServo;
+bool preHeatStatus = false;
 
 #define NOT_READY       1
 #define IN_PROCESS      2
@@ -76,7 +85,8 @@ WidgetLED readyNow(V9);
 void brewerStateLED(int state);
 
 #include "uiElements.h"
-#include "topBar.h"
+#include "commonFunctions.h"
+#include "headerFooter.h"
 #include "loadingScreen.h"
 #include "homeScreen.h"
 
@@ -188,7 +198,7 @@ void LeftUpper() {
       // do nothing
       break;
     case APP_HOME :
-      // do nothing
+      homeLeftUpper();
       break;
   }
 }
@@ -262,6 +272,7 @@ void loop() {
   }
   preHeatTimer.tick();
   sensors.requestTemperatures();
+  kettleTempBuff = kettleTemp;
   kettleTemp = sensors.getTempCByIndex(0);
   switch (appMode)
   {
@@ -286,7 +297,33 @@ void loop() {
       }
       break;
   }
-  if(preHeatStatus) {
+  if (preHeatStatus) {
     // check boiler temp, turn it on if it needs heat
+    if (kettleTemp <= (preHeatTarget - triggerLow)) {             // Kettle temp is low, We PROBABLY want to turn on
+      if (!isKettleOn()) {
+        footerPrintMsg("Kettle On");
+        kettleOn();                 // Kettle was off, we definitely want to turn it on
+      } else if ((millis() - kettleOnEvent) > 300000) {
+        // Kettle was on for more than 5 minutes (we may want to adjust this time) and not up to temp yet, this could indicate that there is a problem
+        // Problems such as...
+        //    temp probe is disconnected
+        //    temp probe is not in or near the heated water
+        //    there is insufficient water in the kettle
+        // These could cause safety or equipment issues, so we should throw an error and halt
+        cancelPreHeat();
+        footerPrintMsg("PREHEAT ISSUE", true);
+      }
+    } else if (kettleTemp >= (preHeatTarget + triggerHigh)) {     // Kettle temp is high, We DO want to turn off
+      if (isKettleOn()) {
+        footerPrintMsg("Kettle Off");
+        kettleOff();                // Kettle was on, turn it off
+      } else if (kettleTemp > kettleTempBuff && (millis() - kettleOffEvent > 300000)) {
+        // Kettle was turned off more than 5 minutes ago (might need to adjust time) and temp is still increasing, this could indicate a faliure to turn off the kettle
+        cancelPreHeat();            // If there is ever a failure to turn off the kettle, preheat should not be used
+        footerPrintMsg("PREHEAT OVERRUN", true);
+      }
+    } else {                                                      // We MIGHT do something
+      // I might add some logic here, I'm going to test what I have first
+    }
   }
 }
