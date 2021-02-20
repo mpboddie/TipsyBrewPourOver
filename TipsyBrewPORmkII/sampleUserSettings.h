@@ -32,3 +32,18 @@ char startUpLogo[] = "logo.bmp";
 #define MOSTLY_WHITE    0xAD75    // 175, 175, 175
 #define BKGD            0x0000    // 0, 0, 0
 #define GREY_GRAY       0x8410    // 128, 128, 128
+
+// HEATER SETTINGS
+// These should be moved to the settings menu once it exists
+float preHeatTarget = 80.0;
+float triggerLow = 5.0;
+float triggerHigh = 1.0;
+unsigned long preHeatDuration = 900000;
+float brewTarget = 97.0;
+
+// KETTLE SETTINGS
+// These are the servo positions for the kettle switch
+// They may need to be calibrated due to changes in the servo, arm installation, or kettle type
+#define KETTLE_ON                   74
+#define KETTLE_NEUTRAL              50
+#define KETTLE_OFF                  32
