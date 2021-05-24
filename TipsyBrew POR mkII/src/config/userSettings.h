@@ -3,8 +3,8 @@
 
 // WiFi settings
 // These must be customized for your network. It should be self explanitory.
-#define WIFI_NETWORK            "EyesOnBack"
-#define WIFI_PASSWORD           "Il!kech33z!ts"
+#define WIFI_NETWORK            ENTER_YOUR_SSID
+#define WIFI_PASSWORD           ENTER_YOUR_PASSWORD
 #define WIFI_TIMEOUT_MS         20000 // 20 second WiFi connection timeout
 #define WIFI_RECOVER_TIME_MS    30000 // Wait 30 seconds after a failed connection attempt
 
