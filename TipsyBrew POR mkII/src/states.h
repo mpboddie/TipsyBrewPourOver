@@ -10,11 +10,20 @@ enum AppModeValues
   APP_COFFEE
 };
 
+enum WifiStates
+{
+  WIFI_DISCONNECTED,
+  WIFI_CONNECTING,
+  WIFI_CONNECTED
+};
+
 struct AppValues {
   AppModeValues currentScreen;
   String time;
-  int8_t wifiStrength;
+  WifiStates wifiState;
+  String ipAddress;
   double kettleTemp;
+  String debugMessage;
 };
 
 #endif
