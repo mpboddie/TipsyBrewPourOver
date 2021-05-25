@@ -4,9 +4,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-#include "../config/userSettings.h"
-#include "../states.h"
-
 extern AppValues appState;
 
 void keepWiFiAlive(void * parameter){

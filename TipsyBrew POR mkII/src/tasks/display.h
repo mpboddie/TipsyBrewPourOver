@@ -15,8 +15,25 @@ void updateDisplay(void * parameter){
         switch (appState.currentScreen)
         {
             case APP_INTRO_SCREEN: {
-                    tft.drawBitmap(9, 88, tipsyBrewTitle, 300, 62, TB_ORANGE);
+                    tft.drawBitmap(9, 78, tipsyBrewTitle, 300, 62, TB_ORANGE);
                     tft.setTextColor(TFT_WHITE, TFT_BLACK);
+                    tft.setTextDatum(MC_DATUM);
+                    int gap = 300/strlen(titleSlogan);
+                    bool picked[strlen(titleSlogan)];
+                    for(int j = 0; j < strlen(titleSlogan); j++) {
+                        picked[j] = false;
+                    }
+                    int rando;
+                    for(int i = 0; i < strlen(titleSlogan); i++) {
+                        do {
+                            rando = random(strlen(titleSlogan));
+                        } while (picked[rando]);
+                        tft.drawChar(titleSlogan[rando], 20+(gap*rando), 145);
+                        picked[rando] = true;
+                        vTaskDelay(300 / portTICK_PERIOD_MS);
+                    }
+                    tft.drawString(tbVersion, 160, 200);
+                    appState.currentScreen = APP_HOME;
                 }
                 break;
             case APP_HOME:

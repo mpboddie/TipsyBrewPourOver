@@ -16,4 +16,7 @@
 #define BKGD            0x0000    // 0, 0, 0
 #define GREY_GRAY       0x8410    // 128, 128, 128
 
+const char *titleSlogan =       "POUR OVER ROBOT"
+const char *tbVersion =         "Mark II v0.1"
+
 #endif
