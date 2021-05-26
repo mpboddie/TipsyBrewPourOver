@@ -33,11 +33,15 @@ void updateDisplay(void * parameter){
                         vTaskDelay(300 / portTICK_PERIOD_MS);
                     }
                     tft.drawString(tbVersion, 160, 200);
+                    vTaskDelay(1000 / portTICK_PERIOD_MS);
                     appState.currentScreen = APP_HOME;
                 }
                 break;
-            case APP_HOME:
-                // baby steps
+            case APP_HOME: {
+                    tft.setViewport(0, 25, 320, 190);
+                    tft.fillScreen(BKGD);
+                    tft.resetViewport();
+                }
                 break;
             case APP_SETTINGS:
                 // seriously, I said baby steps!
@@ -66,6 +70,15 @@ void updateDisplay(void * parameter){
         } else if(appState.wifiState == WIFI_DISCONNECTED) {
             tft.drawBitmap(tft.width() - 25, 0, wifiOff, 25, 25, GREY_GRAY);
         }
+
+        // Draw the time
+        tft.resetViewport();
+        tft.setTextDatum(MC_DATUM);
+        tft.setTextColor(GREY_GRAY, BKGD);
+        char timeHourMinute[6];
+        strftime(timeHourMinute, 6, "%I:%M", &appState.timeinfo);
+        tft.drawString(timeHourMinute, tft.width()/2, 13, 4);
+
         vTaskDelay(250 / portTICK_PERIOD_MS);
     }
 }

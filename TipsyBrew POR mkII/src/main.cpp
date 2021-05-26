@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include <WiFi.h>
+#include <time.h>
 //#include <WiFiClient.h>
 //#include <WebServer.h>
 //#include <ESPmDNS.h>
@@ -14,6 +15,7 @@
 
 #include "tasks/wifiConnection.h"
 #include "tasks/display.h"
+#include "tasks/ntpTime.h"
 
 // Which core is Arduino running on
 #if CONFIG_FREERTOS_UNICORE
@@ -43,7 +45,6 @@ void touch_calibrate();
 
 void setup(void) {
   appState.currentScreen = APP_INTRO_SCREEN;
-  appState.time = "00:00";
   appState.kettleTemp = 0;
   appState.ipAddress = "0.0.0.0";
   appState.wifiState = WIFI_DISCONNECTED;
@@ -69,6 +70,8 @@ void setup(void) {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   
   xTaskCreatePinnedToCore(
     keepWiFiAlive,
@@ -83,12 +86,20 @@ void setup(void) {
   xTaskCreate(
     updateDisplay,
     "UpdateDisplay",  // Task name
-    25000,             // Stack size (bytes)
+    15000,             // Stack size (bytes)
     NULL,             // Parameter
     2,                // Task priority
     NULL              // Task handle
   );
   
+  xTaskCreate(
+    updateDateTime,
+    "UpdateDateTime", // Task name
+    5000,             // Stack size (bytes)
+    NULL,             // Parameter
+    3,                // Task priority
+    NULL              // Task handle
+  );
 }
 
 void loop(void) {

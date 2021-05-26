@@ -19,7 +19,7 @@ enum WifiStates
 
 struct AppValues {
   AppModeValues currentScreen;
-  String time;
+  struct tm timeinfo;
   WifiStates wifiState;
   String ipAddress;
   double kettleTemp;

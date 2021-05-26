@@ -10,6 +10,11 @@
 
 #define HOSTNAME                "TipsyBrew"
 
+// NTP settings
+const char* ntpServer =             "us.pool.ntp.org";
+const long  gmtOffset_sec =         -18000;     // US East Coast
+const int   daylightOffset_sec =    3600;
+
 // CUSTOM COLORS
 #define TB_ORANGE       0xFA20    // 255, 68, 0
 #define MOSTLY_WHITE    0xAD75    // 175, 175, 175
