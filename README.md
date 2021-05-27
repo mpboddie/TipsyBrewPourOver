@@ -16,4 +16,3 @@ This is the exact code that the Phase 0.5 demonstration used. There are some sli
 ## Mk II has begun
 Mark II of the POR is aimed towards a complete kit for others to build. That means I am trying to create a stable design. At the moment of writing it will be the leading edge design, but once completed I will do my best to heavily document it and hopefully a community will grow with it.
 
-MkII is using the ILI9341 library at https://github.com/Bodmer/TFT_ILI9341.
