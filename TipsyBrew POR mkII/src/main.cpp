@@ -49,12 +49,13 @@ void setup(void) {
   appState.ipAddress = "0.0.0.0";
   appState.wifiState = WIFI_DISCONNECTED;
   appState.debugMessage = "Starting";
+  appState.screenRefresh = false;
 
   // Setup the LCD
   tft.begin();
   tft.setRotation(1);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_WHITE);
+  tft.fillScreen(BKGD);
+  tft.setTextColor(TFT_WHITE, BKGD);
 
   // Calibrate the touch screen and retrieve the scaling factors
   touch_calibrate();

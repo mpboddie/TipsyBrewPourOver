@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include "icons.h"
+#include "../functions/buttons.h"
 
 extern TFT_eSPI tft;
 extern AppValues appState;
@@ -34,13 +35,36 @@ void updateDisplay(void * parameter){
                     }
                     tft.drawString(tbVersion, 160, 200);
                     vTaskDelay(1000 / portTICK_PERIOD_MS);
+                    appState.screenRefresh = true;
                     appState.currentScreen = APP_HOME;
                 }
                 break;
             case APP_HOME: {
-                    tft.setViewport(0, 25, 320, 190);
-                    tft.fillScreen(BKGD);
-                    tft.resetViewport();
+                    if(appState.screenRefresh) {
+                        appState.screenRefresh = false;
+
+                        tft.setViewport(0, 25, 320, 190);
+                        tft.fillScreen(BKGD);
+                        tft.resetViewport();
+                        
+                        tft.fillRect(0, 0, 99, 25, BKGD);
+                        tft.setTextColor(GREY_GRAY, BKGD);
+
+                        tft.drawBitmap(3, 0, homeSmall, 25, 25, GREY_GRAY);
+                        tft.setTextDatum(TL_DATUM);
+                        tft.drawString("Home", 28, ((25 - tft.fontHeight(2))/2), 2);
+
+                        drawBigButton(LEFT_OFF, BOTTOM, cardList, TB_ORANGE, MOSTLY_WHITE, "Logs", MOSTLY_WHITE, GREY_GRAY, "COMING SOON");
+                        drawBigButton(RIGHT_OFF, TOP, coffeeBean, MOSTLY_WHITE, TB_ORANGE, "Coffee", TB_ORANGE, MOSTLY_WHITE);
+                        drawBigButton(RIGHT_OFF, BOTTOM, gear, MOSTLY_WHITE, TFT_BLUE, "Settings", TFT_BLUE, MOSTLY_WHITE);
+                    }
+
+                    uint16_t x, y;
+
+                    if (tft.getTouch(&x, &y))
+                    {
+                        tft.drawCircle(x, y, 10, TFT_RED);
+                    }
                 }
                 break;
             case APP_SETTINGS:
@@ -75,11 +99,11 @@ void updateDisplay(void * parameter){
         tft.resetViewport();
         tft.setTextDatum(MC_DATUM);
         tft.setTextColor(GREY_GRAY, BKGD);
-        char timeHourMinute[6];
-        strftime(timeHourMinute, 6, "%I:%M", &appState.timeinfo);
+        char timeHourMinute[8];
+        strftime(timeHourMinute, 8, " %I:%M ", &appState.timeinfo);
         tft.drawString(timeHourMinute, tft.width()/2, 13, 4);
 
-        vTaskDelay(250 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
