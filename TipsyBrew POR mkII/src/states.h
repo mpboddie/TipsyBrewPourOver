@@ -25,6 +25,8 @@ struct AppValues {
   double kettleTemp;
   bool screenRefresh;
   String debugMessage;
+  bool preheatStatus;
+  long activityTimer;
 };
 
 #endif

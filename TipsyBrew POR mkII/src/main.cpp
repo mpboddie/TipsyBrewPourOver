@@ -50,6 +50,8 @@ void setup(void) {
   appState.wifiState = WIFI_DISCONNECTED;
   appState.debugMessage = "Starting";
   appState.screenRefresh = false;
+  appState.preheatStatus = false;
+  appState.activityTimer = millis();
 
   // Setup the LCD
   tft.begin();
