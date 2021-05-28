@@ -9,6 +9,12 @@
 extern TFT_eSPI tft;
 extern AppValues appState;
 
+void clearContentArea() {
+    tft.setViewport(0, 25, 320, 190);
+    tft.fillScreen(BKGD);
+    tft.resetViewport();
+}
+
 void updateDisplay(void * parameter){
     for(;;){
         // This handles all changes to the display
@@ -43,9 +49,7 @@ void updateDisplay(void * parameter){
                     if(appState.screenRefresh) {
                         appState.screenRefresh = false;
 
-                        tft.setViewport(0, 25, 320, 190);
-                        tft.fillScreen(BKGD);
-                        tft.resetViewport();
+                        clearContentArea();
                         
                         tft.fillRect(0, 0, 99, 25, BKGD);
                         tft.setTextColor(GREY_GRAY, BKGD);
@@ -54,6 +58,11 @@ void updateDisplay(void * parameter){
                         tft.setTextDatum(TL_DATUM);
                         tft.drawString("Home", 28, ((25 - tft.fontHeight(2))/2), 2);
 
+                        if(appState.preheatStatus) {
+                            drawBigButton(LEFT_ON, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Pre-heat", MOSTLY_WHITE, TB_ORANGE, "ON");
+                        } else {
+                            drawBigButton(LEFT_OFF, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Pre-heat", MOSTLY_WHITE, TB_ORANGE, "OFF");
+                        }
                         drawBigButton(LEFT_OFF, BOTTOM, cardList, TB_ORANGE, MOSTLY_WHITE, "Logs", MOSTLY_WHITE, GREY_GRAY, "COMING SOON");
                         drawBigButton(RIGHT_OFF, TOP, coffeeBean, MOSTLY_WHITE, TB_ORANGE, "Coffee", TB_ORANGE, MOSTLY_WHITE);
                         drawBigButton(RIGHT_OFF, BOTTOM, gear, MOSTLY_WHITE, TFT_BLUE, "Settings", TFT_BLUE, MOSTLY_WHITE);
@@ -63,12 +72,36 @@ void updateDisplay(void * parameter){
 
                     if (tft.getTouch(&x, &y))
                     {
-                        tft.drawCircle(x, y, 10, TFT_RED);
+                        if(x < tft.width()/2) {
+                            if(y < tft.height()/2) {
+                                // Top Left Pressed
+                                if(millis() - appState.activityTimer > 250) {
+                                    appState.activityTimer = millis();
+                                    appState.preheatStatus = !appState.preheatStatus;
+                                    appState.screenRefresh = true;
+                                }
+                            } else {
+                                // Bottom Left Pressed
+                                // Logs is not implemented yet
+                            }
+                        } else {
+                            if(y < tft.height()/2) {
+                                // Top Right Pressed
+                                appState.activityTimer = millis();
+                                appState.currentScreen = APP_COFFEE;
+                            } else {
+                                // Bottom Right Pressed
+                                appState.activityTimer = millis();
+                                appState.currentScreen = APP_SETTINGS;
+                            }
+                        }
                     }
                 }
                 break;
             case APP_SETTINGS:
                 // seriously, I said baby steps!
+                break;
+            case APP_COFFEE:
                 break;
             case APP_LOGS:
                 // HA! Logs?! no we aren't there yet
