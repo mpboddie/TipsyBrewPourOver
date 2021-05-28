@@ -102,6 +102,7 @@ void drawBigButton( int positionX,
                     const char *caption = "null") {
   tft.fillRoundRect(bigXcoord(positionX), Ycoord(positionY), (tft.width() / 2) - BUTTON_SIDE_PADDING, BUTTON_HEIGHT, CORNER_RADIUS, titleBGcolor);
   tft.setTextColor(titleColor);
+  tft.setTextDatum(TL_DATUM);
   int titleBuffer = 0;
   if (positionX == LEFT_OFF || positionX == RIGHT_ON) { titleBuffer = LITTLE_WIDTH; }
   if (caption == "null") {

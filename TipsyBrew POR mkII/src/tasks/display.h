@@ -15,10 +15,32 @@ void clearContentArea() {
     tft.resetViewport();
 }
 
+void drawScreenLabel() {
+  tft.fillRect(0, 0, 99, 25, BKGD);
+  tft.setTextColor(GREY_GRAY, BKGD);
+  tft.setTextDatum(ML_DATUM);
+  switch (appState.currentScreen) {
+    case APP_HOME :
+        tft.drawBitmap(3, 0, homeSmall, 25, 25, GREY_GRAY);
+        tft.drawString("Home", 28, 13, 2);
+        break;
+    case APP_SETTINGS :
+        tft.drawBitmap(3, 0, gearSmall, 25, 25, GREY_GRAY);
+        tft.drawString("Settings", 28, 13, 2);
+        break;
+    case APP_COFFEE :
+        tft.drawBitmap(3, 0, coffeeSmall, 25, 25, GREY_GRAY);
+        tft.drawString("Coffee", 28, 13, 2);
+        break;
+  }
+}
+
 void updateDisplay(void * parameter){
     for(;;){
         // This handles all changes to the display
         // To my knowledge, splitting display updates to multiple threads could cause issues
+        uint16_t x, y;
+
         switch (appState.currentScreen)
         {
             case APP_INTRO_SCREEN: {
@@ -51,12 +73,7 @@ void updateDisplay(void * parameter){
 
                         clearContentArea();
                         
-                        tft.fillRect(0, 0, 99, 25, BKGD);
-                        tft.setTextColor(GREY_GRAY, BKGD);
-
-                        tft.drawBitmap(3, 0, homeSmall, 25, 25, GREY_GRAY);
-                        tft.setTextDatum(TL_DATUM);
-                        tft.drawString("Home", 28, ((25 - tft.fontHeight(2))/2), 2);
+                        drawScreenLabel();
 
                         if(appState.preheatStatus) {
                             drawBigButton(LEFT_ON, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Pre-heat", MOSTLY_WHITE, TB_ORANGE, "ON");
@@ -68,14 +85,12 @@ void updateDisplay(void * parameter){
                         drawBigButton(RIGHT_OFF, BOTTOM, gear, MOSTLY_WHITE, TFT_BLUE, "Settings", TFT_BLUE, MOSTLY_WHITE);
                     }
 
-                    uint16_t x, y;
-
                     if (tft.getTouch(&x, &y))
                     {
                         if(x < tft.width()/2) {
                             if(y < tft.height()/2) {
                                 // Top Left Pressed
-                                if(millis() - appState.activityTimer > 250) {
+                                if(millis() - appState.activityTimer > DEBOUNCE_MS) {
                                     appState.activityTimer = millis();
                                     appState.preheatStatus = !appState.preheatStatus;
                                     appState.screenRefresh = true;
@@ -87,21 +102,62 @@ void updateDisplay(void * parameter){
                         } else {
                             if(y < tft.height()/2) {
                                 // Top Right Pressed
-                                appState.activityTimer = millis();
-                                appState.currentScreen = APP_COFFEE;
+                                if(millis() - appState.activityTimer > DEBOUNCE_MS) {
+                                    appState.activityTimer = millis();
+                                    appState.currentScreen = APP_COFFEE;
+                                    appState.screenRefresh = true;
+                                }
                             } else {
                                 // Bottom Right Pressed
-                                appState.activityTimer = millis();
-                                appState.currentScreen = APP_SETTINGS;
+                                if(millis() - appState.activityTimer > DEBOUNCE_MS) {
+                                    appState.activityTimer = millis();
+                                    appState.currentScreen = APP_SETTINGS;
+                                    appState.screenRefresh = true;
+                                }
                             }
                         }
                     }
                 }
                 break;
             case APP_SETTINGS:
-                // seriously, I said baby steps!
+                if(appState.screenRefresh) {
+                    appState.screenRefresh = false;
+                    clearContentArea();
+                    drawScreenLabel();
+                    tft.setTextColor(MOSTLY_WHITE, TFT_RED);
+                    tft.setTextDatum(TC_DATUM);
+                    tft.drawString("Settings not created yet", tft.width()/2, 60, 4);
+                    tft.drawString("Tap to return Home", tft.width()/2, tft.fontHeight(4)+70, 4);
+                }
+
+                if (tft.getTouch(&x, &y))
+                {
+                    if(millis() - appState.activityTimer > DEBOUNCE_MS) {
+                        appState.activityTimer = millis();
+                        appState.currentScreen = APP_HOME;
+                        appState.screenRefresh = true;
+                    }
+                }
                 break;
             case APP_COFFEE:
+                if(appState.screenRefresh) {
+                    appState.screenRefresh = false;
+                    clearContentArea();
+                    drawScreenLabel();
+                    tft.setTextColor(MOSTLY_WHITE, TFT_RED);
+                    tft.setTextDatum(TC_DATUM);
+                    tft.drawString("This is coming soon", tft.width()/2, 60, 4);
+                    tft.drawString("Tap to return Home for now", tft.width()/2, tft.fontHeight(4)+70, 4);
+                }
+
+                if (tft.getTouch(&x, &y))
+                {
+                    if(millis() - appState.activityTimer > DEBOUNCE_MS) {
+                        appState.activityTimer = millis();
+                        appState.currentScreen = APP_HOME;
+                        appState.screenRefresh = true;
+                    }
+                }
                 break;
             case APP_LOGS:
                 // HA! Logs?! no we aren't there yet
