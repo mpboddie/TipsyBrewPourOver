@@ -22,15 +22,15 @@ void drawScreenLabel() {
   switch (appState.currentScreen) {
     case APP_HOME :
         tft.drawBitmap(3, 0, homeSmall, 25, 25, GREY_GRAY);
-        tft.drawString("Home", 28, 13, 2);
+        tft.drawString("Home", 32, 13, 2);
         break;
     case APP_SETTINGS :
         tft.drawBitmap(3, 0, gearSmall, 25, 25, GREY_GRAY);
-        tft.drawString("Settings", 28, 13, 2);
+        tft.drawString("Settings", 32, 13, 2);
         break;
     case APP_COFFEE :
         tft.drawBitmap(3, 0, coffeeSmall, 25, 25, GREY_GRAY);
-        tft.drawString("Coffee", 28, 13, 2);
+        tft.drawString("Coffee", 32, 13, 2);
         break;
   }
 }
@@ -76,9 +76,9 @@ void updateDisplay(void * parameter){
                         drawScreenLabel();
 
                         if(appState.preheatStatus) {
-                            drawBigButton(LEFT_ON, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Pre-heat", MOSTLY_WHITE, TB_ORANGE, "ON");
+                            drawBigButton(LEFT_ON, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Preheat", MOSTLY_WHITE, TB_ORANGE, "ON");
                         } else {
-                            drawBigButton(LEFT_OFF, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Pre-heat", MOSTLY_WHITE, TB_ORANGE, "OFF");
+                            drawBigButton(LEFT_OFF, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Preheat", MOSTLY_WHITE, TB_ORANGE, "OFF");
                         }
                         drawBigButton(LEFT_OFF, BOTTOM, cardList, TB_ORANGE, MOSTLY_WHITE, "Logs", MOSTLY_WHITE, GREY_GRAY, "COMING SOON");
                         drawBigButton(RIGHT_OFF, TOP, coffeeBean, MOSTLY_WHITE, TB_ORANGE, "Coffee", TB_ORANGE, MOSTLY_WHITE);
@@ -93,7 +93,12 @@ void updateDisplay(void * parameter){
                                 if(millis() - appState.activityTimer > DEBOUNCE_MS) {
                                     appState.activityTimer = millis();
                                     appState.preheatStatus = !appState.preheatStatus;
-                                    appState.screenRefresh = true;
+                                    //appState.screenRefresh = true;
+                                    if(appState.preheatStatus) {
+                                        drawBigButton(LEFT_ON, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Preheat", MOSTLY_WHITE, TB_ORANGE, "ON");
+                                    } else {
+                                        drawBigButton(LEFT_OFF, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Preheat", MOSTLY_WHITE, TB_ORANGE, "OFF");
+                                    }
                                 }
                             } else {
                                 // Bottom Left Pressed
@@ -191,6 +196,15 @@ void updateDisplay(void * parameter){
         char timeHourMinute[8];
         strftime(timeHourMinute, 8, " %I:%M ", &appState.timeinfo);
         tft.drawString(timeHourMinute, tft.width()/2, 13, 4);
+
+        // Draw the kettle temp
+        tft.setTextDatum(TL_DATUM);
+        tft.fillRect(0, tft.height() - 25, tft.width()/2, 25, BKGD);
+        char str[14];
+        dtostrf(appState.kettleTemp, 4, 1, str);
+        strcat(str, " deg C");
+        tft.setTextColor(MOSTLY_WHITE);
+        tft.drawString(str, 3, tft.height() - 25 + ((25-tft.fontHeight(2))/2), 2);
 
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }

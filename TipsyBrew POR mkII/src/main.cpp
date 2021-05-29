@@ -9,13 +9,17 @@
 //#include <FS.h>
 #include <SPI.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
+#include "config/pins.h"
 #include "config/userSettings.h"
 #include "states.h"
 
 #include "tasks/wifiConnection.h"
 #include "tasks/display.h"
 #include "tasks/ntpTime.h"
+#include "tasks/kettleTemp.h"
 
 // Which core is Arduino running on
 #if CONFIG_FREERTOS_UNICORE
@@ -30,6 +34,9 @@
 
 AppValues appState;
 TFT_eSPI tft = TFT_eSPI();
+
+OneWire oneWire(ONE_WIRE);
+DallasTemperature sensors(&oneWire);
 
 // This is the file name used to store the calibration data
 // You can change this to create new calibration files.
@@ -98,6 +105,15 @@ void setup(void) {
   xTaskCreate(
     updateDateTime,
     "UpdateDateTime", // Task name
+    5000,             // Stack size (bytes)
+    NULL,             // Parameter
+    4,                // Task priority
+    NULL              // Task handle
+  );
+
+  xTaskCreate(
+    updateKettleTemp,
+    "UpdateKettleTemp", // Task name
     5000,             // Stack size (bytes)
     NULL,             // Parameter
     3,                // Task priority
