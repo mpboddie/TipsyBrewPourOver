@@ -23,6 +23,7 @@ struct AppValues {
   WifiStates wifiState;
   String ipAddress;
   double kettleTemp;
+  bool kettleChange;
   bool screenRefresh;
   String debugMessage;
   bool preheatStatus;

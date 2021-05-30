@@ -198,13 +198,16 @@ void updateDisplay(void * parameter){
         tft.drawString(timeHourMinute, tft.width()/2, 13, 4);
 
         // Draw the kettle temp
-        tft.setTextDatum(TL_DATUM);
-        tft.fillRect(0, tft.height() - 25, tft.width()/2, 25, BKGD);
-        char str[14];
-        dtostrf(appState.kettleTemp, 4, 1, str);
-        strcat(str, " deg C");
-        tft.setTextColor(MOSTLY_WHITE);
-        tft.drawString(str, 3, tft.height() - 25 + ((25-tft.fontHeight(2))/2), 2);
+        if(appState.kettleChange) {
+            tft.setTextDatum(TL_DATUM);
+            tft.fillRect(0, tft.height() - 25, tft.width()/2, 25, BKGD);
+            char str[14];
+            dtostrf(appState.kettleTemp, 4, 1, str);
+            strcat(str, " deg C");
+            tft.setTextColor(GREY_GRAY);
+            tft.drawString(str, 3, tft.height() - 25 + ((25-tft.fontHeight(2))/2), 2);
+            appState.kettleChange = false;
+        }
 
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }

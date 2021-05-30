@@ -10,7 +10,11 @@ extern DallasTemperature sensors;
 void updateKettleTemp(void * parameter){
     for(;;){
         sensors.requestTemperatures();
-        appState.kettleTemp = sensors.getTempCByIndex(0);
+        double kettleTemp = sensors.getTempCByIndex(0);
+        if(appState.kettleTemp != kettleTemp) {
+            appState.kettleTemp = kettleTemp;
+            appState.kettleChange = true;
+        }
         vTaskDelay(250 / portTICK_PERIOD_MS);
     }
 }
