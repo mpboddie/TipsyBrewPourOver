@@ -14,6 +14,7 @@
 
 #include "config/pins.h"
 #include "config/userSettings.h"
+#include "config/settingsSPIFFS.h"
 #include "states.h"
 
 #include "tasks/wifiConnection.h"
@@ -70,11 +71,6 @@ void setup(void) {
   // Calibrate the touch screen and retrieve the scaling factors
   touch_calibrate();
 
-  /*
-  // Builtin LED
-  pinMode(led, OUTPUT);
-  digitalWrite(led, LOW);
-  */
   Serial.begin(115200);
 
   if(!SPIFFS.begin(true)){
@@ -83,6 +79,8 @@ void setup(void) {
   }
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+  loadCoffeeSettings(filename, coffeeSettings);
   
   xTaskCreatePinnedToCore(
     keepWiFiAlive,

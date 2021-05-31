@@ -15,6 +15,9 @@ void updateKettleTemp(void * parameter){
             appState.kettleTemp = kettleTemp;
             appState.kettleChange = true;
         }
+        if(appState.preheatStatus) {
+            
+        }
         vTaskDelay(250 / portTICK_PERIOD_MS);
     }
 }
