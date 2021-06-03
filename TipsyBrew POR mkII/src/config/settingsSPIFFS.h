@@ -35,7 +35,7 @@ void loadCoffeeSettings(const char *filename, CoffeeSettings &coffeeSettings) {
   //        doc["hostname"] | "example.com",  // <- source
   //        sizeof(config.hostname));         // <- destination's capacity
   coffeeSettings.brewTempTarget = doc["brewTemp"] | 100;
-  coffeeSettings.coffeeRatio = doc["ratio"] | 18;
+  coffeeSettings.coffeeRatio = doc["ratio"] | 16;
 
   file.close();
 }
