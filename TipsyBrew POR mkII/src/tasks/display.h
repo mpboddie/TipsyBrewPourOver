@@ -5,6 +5,7 @@
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include "icons.h"
 #include "../functions/buttons.h"
+#include "../config/settingsPage.h"
 
 extern TFT_eSPI tft;
 extern AppValues appState;
@@ -59,10 +60,10 @@ void updateDisplay(void * parameter){
                         } while (picked[rando]);
                         tft.drawChar(titleSlogan[rando], 20+(gap*rando), 145);
                         picked[rando] = true;
-                        vTaskDelay(300 / portTICK_PERIOD_MS);
+                        vTaskDelay(200 / portTICK_PERIOD_MS);
                     }
                     tft.drawString(tbVersion, 160, 200);
-                    vTaskDelay(1000 / portTICK_PERIOD_MS);
+                    vTaskDelay(1500 / portTICK_PERIOD_MS);
                     appState.screenRefresh = true;
                     appState.currentScreen = APP_HOME;
                 }
@@ -129,18 +130,54 @@ void updateDisplay(void * parameter){
                     appState.screenRefresh = false;
                     clearContentArea();
                     drawScreenLabel();
-                    tft.setTextColor(MOSTLY_WHITE, TFT_RED);
-                    tft.setTextDatum(TC_DATUM);
-                    tft.drawString("Settings not created yet", tft.width()/2, 60, 4);
-                    tft.drawString("Tap to return Home", tft.width()/2, tft.fontHeight(4)+70, 4);
+                    drawLittleButton(LEFT_OFF, TOP, arrowUp, TFT_BLUE, MOSTLY_WHITE);
+                    drawLittleButton(LEFT_OFF, BOTTOM, arrowDown, TFT_BLUE, MOSTLY_WHITE);
+                    drawLittleButton(RIGHT_OFF, TOP, arrowUp, TB_ORANGE, MOSTLY_WHITE);
+                    drawLittleButton(RIGHT_OFF, BOTTOM, arrowDown, TB_ORANGE, MOSTLY_WHITE);
+                    drawSetting();
                 }
-
+                
                 if (tft.getTouch(&x, &y))
                 {
                     if(millis() - appState.activityTimer > DEBOUNCE_MS) {
                         appState.activityTimer = millis();
-                        appState.currentScreen = APP_HOME;
-                        appState.screenRefresh = true;
+                        if(x < 55 && y > 25 && y < tft.height()/2) {
+                            // Previous setting
+                            if(currentSetting == 0) { 
+                                currentSetting = NUM_OF_SETTINGS-1; 
+                            } else {
+                                currentSetting--;
+                            }
+                            drawSetting();
+                        } else if(x < 55 && y > tft.height()/2 && y < tft.height()-25) {
+                            // Next setting
+                            if(currentSetting == NUM_OF_SETTINGS-1) { 
+                                currentSetting = 0; 
+                            } else {
+                                currentSetting++;
+                            }
+                            drawSetting();
+                        } else if (x > 265 && y > 25 && y < tft.height()/2) {
+                            // Increase setting value
+                            int x = *settingsList[currentSetting].value;
+                            if(settingsList[currentSetting].max > x) {
+                                x++;
+                                *settingsList[currentSetting].value = x;
+                            }
+                            drawSetting();
+                        } else if (x > 265 && y > tft.height()/2 && y < tft.height()-25) {
+                            // Decrease setting value
+                            int x = *settingsList[currentSetting].value;
+                            if(settingsList[currentSetting].min < x) {
+                                x--;
+                                *settingsList[currentSetting].value = x;
+                            }
+                            drawSetting();
+                        } else {
+                            saveCoffeeSettings(filename, coffeeSettings);
+                            appState.currentScreen = APP_HOME;
+                            appState.screenRefresh = true;
+                        }
                     }
                 }
                 break;
