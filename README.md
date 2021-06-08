@@ -10,9 +10,10 @@ So the design and approach of this project is to emphasize simplicity and approa
 
 Keep tabs on the everyday progress of this project at [TipsyBrew](https://tipsybrew.com/tags/pourover/). Project code and models will be stored here on GitHub though.
 
-## earlyPhase.ino
+## EarlyPhase (depricated)
 This is the exact code that the Phase 0.5 demonstration used. There are some slight issues with this, but nothing that prevents a cup of coffee from being made. I would have preferred to hold it back for some polishing before putting it up here, but I am trying to fight those instincts and make this as public as possible. As always, check [TipsyBrew](https://tipsybrew.com/blog/2020-03-01-success-first-cup-video/) for the 0.5 demonstration and related news on the [pour over project](https://tipsybrew.com/projects). Early Phase was kind of like the moon shot code to demonstrate that the POR would work. It is still being used to make coffee daily to fuel Tipsy during mkII progress, but it is not long for this world.
 
 ## Mk II has begun
+Note: There are two versions of MkII right now. I am in the process of converting from the Arduino MEGA to the ESP32. This will be resolved soon.
 Mark II of the POR is aimed towards a complete kit for others to build. That means I am trying to create a stable design. At the moment of writing it will be the leading edge design, but once completed I will do my best to heavily document it and hopefully a community will grow with it.
 
