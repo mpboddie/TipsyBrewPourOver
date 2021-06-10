@@ -126,6 +126,7 @@ void updateDisplay(void * parameter){
                 }
                 break;
             case APP_SETTINGS:
+                // TODO: settings functions should be organized and moved to settingsPAge.h
                 if(appState.screenRefresh) {
                     appState.screenRefresh = false;
                     clearContentArea();
@@ -186,10 +187,20 @@ void updateDisplay(void * parameter){
                     appState.screenRefresh = false;
                     clearContentArea();
                     drawScreenLabel();
-                    tft.setTextColor(MOSTLY_WHITE, TFT_RED);
+                    /*tft.setTextColor(MOSTLY_WHITE, TFT_RED);
                     tft.setTextDatum(TC_DATUM);
                     tft.drawString("This is coming soon", tft.width()/2, 60, 4);
-                    tft.drawString("Tap to return Home for now", tft.width()/2, tft.fontHeight(4)+70, 4);
+                    tft.drawString("Tap to return Home for now", tft.width()/2, tft.fontHeight(4)+70, 4);*/
+                    drawLittleButton(LEFT_OFF, TOP, arrowUp, TFT_BLUE, MOSTLY_WHITE);
+                    drawLittleButton(LEFT_OFF, BOTTOM, homeSmall, TFT_BLACK, MOSTLY_WHITE);
+                    drawLittleButton(RIGHT_OFF, TOP, arrowUp, MOSTLY_WHITE, TFT_BLUE);
+                    drawLittleButton(RIGHT_OFF, BOTTOM, arrowDown, MOSTLY_WHITE, TB_ORANGE);
+                    tft.setViewport(tft.width()*(3/8), 26, tft.width()*(5/8)-55, tft.height()-50);
+                    tft.drawString("PREPARE", 0, 0, 4);
+                    tft.drawString("1. Put Carafe in TipsyBrew", tft.width()*(3/8), 5+tft.fontHeight(4), 2);
+                    tft.drawString("2. Put EMPTY Cone in TipsyBrew", tft.width()*(3/8), (2*5)+tft.fontHeight(2)+tft.fontHeight(4), 2);
+                    tft.drawString("3. Put Filter in Cone", tft.width()*(3/8), (3*5)+(2*tft.fontHeight(2))+tft.fontHeight(4), 2);
+                    tft.resetViewport();
                 }
 
                 if (tft.getTouch(&x, &y))
