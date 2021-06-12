@@ -133,8 +133,8 @@ void updateDisplay(void * parameter){
                     drawScreenLabel();
                     drawLittleButton(LEFT_OFF, TOP, arrowUp, TFT_BLUE, MOSTLY_WHITE);
                     drawLittleButton(LEFT_OFF, BOTTOM, arrowDown, TFT_BLUE, MOSTLY_WHITE);
-                    drawLittleButton(RIGHT_OFF, TOP, arrowUp, TB_ORANGE, MOSTLY_WHITE);
-                    drawLittleButton(RIGHT_OFF, BOTTOM, arrowDown, TB_ORANGE, MOSTLY_WHITE);
+                    drawLittleButton(RIGHT_OFF, TOP, plus, TB_ORANGE, MOSTLY_WHITE);
+                    drawLittleButton(RIGHT_OFF, BOTTOM, minus, TB_ORANGE, MOSTLY_WHITE);
                     drawSetting();
                 }
                 
