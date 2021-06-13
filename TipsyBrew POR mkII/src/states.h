@@ -29,6 +29,7 @@ struct AppValues {
   String debugMessage;
   bool preheatStatus;
   long activityTimer;
+  long safetyTimer;
 };
 
 #endif

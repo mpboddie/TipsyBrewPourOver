@@ -22,9 +22,14 @@ const int   daylightOffset_sec =    3600;
 #define BKGD            0x0000    // 0, 0, 0
 #define GREY_GRAY       0x8410    // 128, 128, 128
 
+// UI settings
 const char *titleSlogan =       "POUR OVER ROBOT";
 const char *tbVersion =         "Mark II v0.1";
 
 #define DEBOUNCE_MS     250
+
+// Safety settings
+const int   preheatTimeout =        1800000;
+const int   brewingTimeout =        1800000;
 
 #endif

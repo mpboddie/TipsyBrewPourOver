@@ -99,6 +99,7 @@ void updateDisplay(void * parameter){
                                     //appState.screenRefresh = true;
                                     if(appState.preheatStatus) {
                                         drawBigButton(LEFT_ON, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Preheat", MOSTLY_WHITE, TB_ORANGE, "ON");
+                                        appState.safetyTimer = millis();
                                     } else {
                                         drawBigButton(LEFT_OFF, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Preheat", MOSTLY_WHITE, TB_ORANGE, "OFF");
                                     }
@@ -187,10 +188,6 @@ void updateDisplay(void * parameter){
                     appState.screenRefresh = false;
                     clearContentArea();
                     drawScreenLabel();
-                    /*tft.setTextColor(MOSTLY_WHITE, TFT_RED);
-                    tft.setTextDatum(TC_DATUM);
-                    tft.drawString("This is coming soon", tft.width()/2, 60, 4);
-                    tft.drawString("Tap to return Home for now", tft.width()/2, tft.fontHeight(4)+70, 4);*/
                     
                     tft.setTextColor(MOSTLY_WHITE, BKGD);
                     tft.setTextDatum(TL_DATUM);
@@ -198,12 +195,10 @@ void updateDisplay(void * parameter){
                     tft.drawString("1. Put Carafe in TipsyBrew", 55, 65+5+tft.fontHeight(4), 2);
                     tft.drawString("2. Put EMPTY Cone in TipsyBrew", 55, 65+(2*5)+tft.fontHeight(2)+tft.fontHeight(4), 2);
                     tft.drawString("3. Put Filter in Cone", 55, 65+(3*5)+(2*tft.fontHeight(2))+tft.fontHeight(4), 2);
-                    tft.setTextDatum(TR_DATUM);
-                    //tft.drawString("CONTINUE ->", tft.width()-55, tft.height()-65, 2);
                     
                     drawLittleButton(LEFT_OFF, TOP, rain, TFT_BLUE, MOSTLY_WHITE);
                     drawLittleButton(LEFT_OFF, BOTTOM, home, TFT_BLACK, MOSTLY_WHITE);
-                    drawLittleButton(RIGHT_OFF, TOP, cold, MOSTLY_WHITE, TFT_BLUE);
+                    drawLittleButton(RIGHT_OFF, TOP, cold, TFT_BLACK, GREY_GRAY);
                     drawLittleButton(RIGHT_OFF, BOTTOM, arrowRight, MOSTLY_WHITE, TB_ORANGE);
                 }
 

@@ -16,14 +16,22 @@ void updateKettleTemp(void * parameter){
             appState.kettleChange = true;
         }
         if(appState.preheatStatus) {
-            if(appState.kettleTemp < (coffeeSettings.preheatTarget-1) && !appState.kettleState) {
-                // preheat is active, the kettle is a bit cool and the kettle is currently off
-                appState.kettleState = true;
-                // TODO: turn on the kettle
-            } else if(appState.kettleTemp >= coffeeSettings.preheatTarget && appState.kettleState) {
-                // preheat is active, the kettle is at temp or above and the kettle is currently on
-                appState.kettleState = false;
-                // TODO: turn off the kettle
+            if((millis() - appState.safetyTimer) >= preheatTimeout) {
+                appState.preheatStatus = false;
+                if(appState.kettleState) {
+                    appState.kettleState = false;
+                    // TODO: turn off kettle
+                }
+            } else {
+                if(appState.kettleTemp < (coffeeSettings.preheatTarget-1) && !appState.kettleState) {
+                    // preheat is active, the kettle is a bit cool and the kettle is currently off
+                    appState.kettleState = true;
+                    // TODO: turn on the kettle
+                } else if(appState.kettleTemp >= coffeeSettings.preheatTarget && appState.kettleState) {
+                    // preheat is active, the kettle is at temp or above and the kettle is currently on
+                    appState.kettleState = false;
+                    // TODO: turn off the kettle
+                }
             }
         } else if(appState.currentScreen == APP_COFFEE) {
             if(appState.kettleTemp < (coffeeSettings.brewTempTarget - 1) && !appState.kettleState) {
