@@ -25,6 +25,16 @@ void updateKettleTemp(void * parameter){
                 appState.kettleState = false;
                 // TODO: turn off the kettle
             }
+        } else if(appState.currentScreen == APP_COFFEE) {
+            if(appState.kettleTemp < (coffeeSettings.brewTempTarget - 1) && !appState.kettleState) {
+                // brewing is active, the kettle is a bit cool and the kettle is currently off
+                appState.kettleState = true;
+                // TODO: turn on the kettle
+            } else if(appState.kettleTemp >= coffeeSettings.brewTempTarget && appState.kettleState) {
+                // brewing is active, the kettle is at temp or above and the kettle is currently on
+                appState.kettleState = false;
+                // TODO: turn off the kettle
+            }
         }
         vTaskDelay(250 / portTICK_PERIOD_MS);
     }

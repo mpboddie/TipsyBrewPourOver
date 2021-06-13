@@ -3,9 +3,11 @@
 
 #include <Arduino.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
+
 #include "icons.h"
 #include "../functions/buttons.h"
-#include "../config/settingsPage.h"
+
+#include "../pages/settingsPage.h"
 
 extern TFT_eSPI tft;
 extern AppValues appState;
@@ -71,9 +73,8 @@ void updateDisplay(void * parameter){
             case APP_HOME: {
                     if(appState.screenRefresh) {
                         appState.screenRefresh = false;
-
                         clearContentArea();
-                        
+                                            
                         drawScreenLabel();
 
                         if(appState.preheatStatus) {
@@ -81,17 +82,18 @@ void updateDisplay(void * parameter){
                         } else {
                             drawBigButton(LEFT_OFF, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Preheat", MOSTLY_WHITE, TB_ORANGE, "OFF");
                         }
-                        drawBigButton(LEFT_OFF, BOTTOM, cardList, TB_ORANGE, MOSTLY_WHITE, "Logs", MOSTLY_WHITE, GREY_GRAY, "COMING SOON");
+                        drawBigButton(LEFT_OFF, BOTTOM, cardList, GREY_GRAY, MOSTLY_WHITE, "Logs", MOSTLY_WHITE, GREY_GRAY, "COMING SOON");
                         drawBigButton(RIGHT_OFF, TOP, coffeeBean, MOSTLY_WHITE, TB_ORANGE, "Coffee", TB_ORANGE, MOSTLY_WHITE);
                         drawBigButton(RIGHT_OFF, BOTTOM, gear, MOSTLY_WHITE, TFT_BLUE, "Settings", TFT_BLUE, MOSTLY_WHITE);
                     }
 
                     if (tft.getTouch(&x, &y))
                     {
-                        if(x < tft.width()/2) {
-                            if(y < tft.height()/2) {
-                                // Top Left Pressed
-                                if(millis() - appState.activityTimer > DEBOUNCE_MS) {
+                        if(millis() - appState.activityTimer > DEBOUNCE_MS) {
+                            if(x < tft.width()/2) {     // Left side
+                                if(y < tft.height()/2) {    // Top half
+                                    // Top Left Pressed
+                                    
                                     appState.activityTimer = millis();
                                     appState.preheatStatus = !appState.preheatStatus;
                                     //appState.screenRefresh = true;
@@ -100,23 +102,20 @@ void updateDisplay(void * parameter){
                                     } else {
                                         drawBigButton(LEFT_OFF, TOP, flame, TB_ORANGE, MOSTLY_WHITE, "Preheat", MOSTLY_WHITE, TB_ORANGE, "OFF");
                                     }
+                                    
+                                } else {
+                                    // Bottom Left Pressed
+                                    // Logs is not implemented yet
                                 }
                             } else {
-                                // Bottom Left Pressed
-                                // Logs is not implemented yet
-                            }
-                        } else {
-                            if(y < tft.height()/2) {
-                                // Top Right Pressed
-                                if(millis() - appState.activityTimer > DEBOUNCE_MS) {
+                                if(y < tft.height()/2) {
+                                    // Top Right Pressed
                                     appState.activityTimer = millis();
                                     appState.currentScreen = APP_COFFEE;
                                     appState.preheatStatus = false;
                                     appState.screenRefresh = true;
-                                }
-                            } else {
-                                // Bottom Right Pressed
-                                if(millis() - appState.activityTimer > DEBOUNCE_MS) {
+                                } else {
+                                    // Bottom Right Pressed
                                     appState.activityTimer = millis();
                                     appState.currentScreen = APP_SETTINGS;
                                     appState.screenRefresh = true;
