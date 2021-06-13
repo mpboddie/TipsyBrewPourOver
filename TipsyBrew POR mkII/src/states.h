@@ -24,6 +24,7 @@ struct AppValues {
   String ipAddress;
   double kettleTemp;
   bool kettleChange;
+  bool kettleState;
   bool screenRefresh;
   String debugMessage;
   bool preheatStatus;

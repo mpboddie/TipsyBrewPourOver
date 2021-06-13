@@ -111,6 +111,7 @@ void updateDisplay(void * parameter){
                                 if(millis() - appState.activityTimer > DEBOUNCE_MS) {
                                     appState.activityTimer = millis();
                                     appState.currentScreen = APP_COFFEE;
+                                    appState.preheatStatus = false;
                                     appState.screenRefresh = true;
                                 }
                             } else {
@@ -199,7 +200,7 @@ void updateDisplay(void * parameter){
                     tft.drawString("2. Put EMPTY Cone in TipsyBrew", 55, 65+(2*5)+tft.fontHeight(2)+tft.fontHeight(4), 2);
                     tft.drawString("3. Put Filter in Cone", 55, 65+(3*5)+(2*tft.fontHeight(2))+tft.fontHeight(4), 2);
                     tft.setTextDatum(TR_DATUM);
-                    tft.drawString("CONTINUE ->", tft.width()-55, tft.height()-65, 2);
+                    //tft.drawString("CONTINUE ->", tft.width()-55, tft.height()-65, 2);
                     
                     drawLittleButton(LEFT_OFF, TOP, rain, TFT_BLUE, MOSTLY_WHITE);
                     drawLittleButton(LEFT_OFF, BOTTOM, home, TFT_BLACK, MOSTLY_WHITE);

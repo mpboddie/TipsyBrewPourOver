@@ -16,7 +16,15 @@ void updateKettleTemp(void * parameter){
             appState.kettleChange = true;
         }
         if(appState.preheatStatus) {
-            
+            if(appState.kettleTemp < (coffeeSettings.preheatTarget-1) && !appState.kettleState) {
+                // preheat is active, the kettle is a bit cool and the kettle is currently off
+                appState.kettleState = true;
+                // TODO: turn on the kettle
+            } else if(appState.kettleTemp >= coffeeSettings.preheatTarget && appState.kettleState) {
+                // preheat is active, the kettle is at temp or above and the kettle is currently on
+                appState.kettleState = false;
+                // TODO: turn off the kettle
+            }
         }
         vTaskDelay(250 / portTICK_PERIOD_MS);
     }

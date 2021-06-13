@@ -55,6 +55,7 @@ void setup(void) {
   appState.currentScreen = APP_INTRO_SCREEN;
   appState.kettleTemp = 0;
   appState.kettleChange = true;
+  appState.kettleState = false;
   appState.ipAddress = "0.0.0.0";
   appState.wifiState = WIFI_DISCONNECTED;
   appState.debugMessage = "Starting";
