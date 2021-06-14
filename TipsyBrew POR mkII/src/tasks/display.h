@@ -8,6 +8,7 @@
 #include "../functions/buttons.h"
 
 #include "../pages/settingsPage.h"
+#include "../pages/coffeePage.h"
 
 extern TFT_eSPI tft;
 extern AppValues appState;
@@ -93,7 +94,6 @@ void updateDisplay(void * parameter){
                             if(x < tft.width()/2) {     // Left side
                                 if(y < tft.height()/2) {    // Top half
                                     // Top Left Pressed
-                                    
                                     appState.activityTimer = millis();
                                     appState.preheatStatus = !appState.preheatStatus;
                                     //appState.screenRefresh = true;
@@ -112,6 +112,7 @@ void updateDisplay(void * parameter){
                                 if(y < tft.height()/2) {
                                     // Top Right Pressed
                                     appState.activityTimer = millis();
+                                    currCoffeePage = PREPARE;
                                     appState.currentScreen = APP_COFFEE;
                                     appState.preheatStatus = false;
                                     appState.screenRefresh = true;
@@ -188,26 +189,14 @@ void updateDisplay(void * parameter){
                     appState.screenRefresh = false;
                     clearContentArea();
                     drawScreenLabel();
-                    
-                    tft.setTextColor(MOSTLY_WHITE, BKGD);
-                    tft.setTextDatum(TL_DATUM);
-                    tft.drawString("PREPARE", 55, 65, 4);
-                    tft.drawString("1. Put Carafe in TipsyBrew", 55, 65+5+tft.fontHeight(4), 2);
-                    tft.drawString("2. Put EMPTY Cone in TipsyBrew", 55, 65+(2*5)+tft.fontHeight(2)+tft.fontHeight(4), 2);
-                    tft.drawString("3. Put Filter in Cone", 55, 65+(3*5)+(2*tft.fontHeight(2))+tft.fontHeight(4), 2);
-                    
-                    drawLittleButton(LEFT_OFF, TOP, rain, TFT_BLUE, MOSTLY_WHITE);
-                    drawLittleButton(LEFT_OFF, BOTTOM, home, TFT_BLACK, MOSTLY_WHITE);
-                    drawLittleButton(RIGHT_OFF, TOP, cold, TFT_BLACK, GREY_GRAY);
-                    drawLittleButton(RIGHT_OFF, BOTTOM, arrowRight, MOSTLY_WHITE, TB_ORANGE);
+                    initCoffee();
                 }
 
                 if (tft.getTouch(&x, &y))
                 {
                     if(millis() - appState.activityTimer > DEBOUNCE_MS) {
                         appState.activityTimer = millis();
-                        appState.currentScreen = APP_HOME;
-                        appState.screenRefresh = true;
+                        coffeeTouch(x, y);
                     }
                 }
                 break;
