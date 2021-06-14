@@ -14,6 +14,8 @@ Keep tabs on the everyday progress of this project at [TipsyBrew](https://tipsyb
 This is the exact code that the Phase 0.5 demonstration used. There are some slight issues with this, but nothing that prevents a cup of coffee from being made. I would have preferred to hold it back for some polishing before putting it up here, but I am trying to fight those instincts and make this as public as possible. As always, check [TipsyBrew](https://tipsybrew.com/blog/2020-03-01-success-first-cup-video/) for the 0.5 demonstration and related news on the [pour over project](https://tipsybrew.com/projects). Early Phase was kind of like the moon shot code to demonstrate that the POR would work. It is still being used to make coffee daily to fuel Tipsy during mkII progress, but it is not long for this world.
 
 ## Mk II has begun
-Note: There are two versions of MkII right now. I am in the process of converting from the Arduino MEGA to the ESP32. The "TipsyBrewPORmkII" directory will be deprecated in favor of "TipsyBrew POR mkII" soon.
 Mark II of the POR is aimed towards a complete kit for others to build. That means I am trying to create a stable design. At the moment of writing it will be the leading edge design, but once completed I will do my best to heavily document it and hopefully a community will grow with it.
 
+MkII will be TipsyBrew POR's first release.
+
+MkII as of this writing is not complete. However, you are more than welcome to give the code a spin. You will need an ESP32 and an SPI LCD touchscreen using the ILI9341 driver. I believe most of the screens of that type are 320x240 and things will probably work best if you stick with that. The screen I am using at the moment is 2.8 inches, but that has no bearing on get the code running.
