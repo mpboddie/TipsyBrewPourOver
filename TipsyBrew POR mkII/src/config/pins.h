@@ -2,6 +2,6 @@
 #define PINS
 
 // One-wire bus (used by temp sensor)
-#define ONE_WIRE                    11
+#define ONE_WIRE                    22
 
 #endif
