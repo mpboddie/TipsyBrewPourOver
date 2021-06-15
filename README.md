@@ -19,3 +19,6 @@ Mark II of the POR is aimed towards a complete kit for others to build. That mea
 MkII will be TipsyBrew POR's first release.
 
 MkII as of this writing is not complete. However, you are more than welcome to give the code a spin. You will need an ESP32 and an SPI LCD touchscreen using the ILI9341 driver. I believe most of the screens of that type are 320x240 and things will probably work best if you stick with that. The screen I am using at the moment is 2.8 inches, but that has no bearing on get the code running.
+
+Current schematic is below (keep in mind I'm focused on the software at the moment and have already used the missing assorted hardware on MkI):
+![Schematic](https://github.com/mpboddie/TipsyBrewPourOver/blob/mkII-ESP32/schematics/PORmkII.png)
