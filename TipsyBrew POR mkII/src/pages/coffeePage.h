@@ -23,11 +23,27 @@ void initCoffee() {
             
             drawLittleButton(LEFT_OFF, TOP, rain, TFT_BLUE, MOSTLY_WHITE);
             drawLittleButton(LEFT_OFF, BOTTOM, home, TFT_BLACK, MOSTLY_WHITE);
-            drawLittleButton(RIGHT_OFF, TOP, cold, TFT_BLACK, GREY_GRAY);
-            drawLittleButton(RIGHT_OFF, BOTTOM, arrowRight, MOSTLY_WHITE, TB_ORANGE);
+            drawLittleButton(RIGHT_OFF, TOP, cupStraw, TFT_BLACK, GREY_GRAY);
+            drawLittleButton(RIGHT_OFF, BOTTOM, cup, MOSTLY_WHITE, TB_ORANGE);
             break;
         case WEIGH:
             tft.setTextColor(MOSTLY_WHITE, BKGD);
+            tft.setTextDatum(TC_DATUM);
+            tft.drawString("SELECT RECIPE:", tft.width()/2, 30, 2);
+            tft.drawString("GROUNDS", (tft.width()/2-55)/2+55, tft.height()/2, 2);
+            tft.drawString("WATER USED", (tft.width()/2-55)/2+tft.width()/2, tft.height()/2, 2);
+            tft.drawString("COFFEE", tft.width()/2, tft.height()-25-tft.fontHeight(4)-5-tft.fontHeight(2), 2);
+            drawLittleButton(LEFT_OFF, TOP, arrowLeft, TFT_BLUE, MOSTLY_WHITE);
+            drawLittleButton(LEFT_OFF, BOTTOM, arrowReturnLeft, TFT_BLACK, MOSTLY_WHITE);
+            drawLittleButton(RIGHT_OFF, TOP, arrowRight, TFT_BLUE, MOSTLY_WHITE);
+            drawLittleButton(RIGHT_OFF, BOTTOM, coffeeBean, MOSTLY_WHITE, TB_ORANGE);
+
+            // sample data for layout purposes
+            tft.drawString("29.8", (tft.width()/2-55)/2+55, tft.height()/2+5+tft.fontHeight(2), 4);
+            tft.drawString("447.0", (tft.width()/2-55)/2+tft.width()/2, tft.height()/2+5+tft.fontHeight(2), 4);
+            tft.drawString("387.5", tft.width()/2, tft.height()-25-tft.fontHeight(4), 4);
+            tft.setTextDatum(MC_DATUM);
+            tft.drawString("Default", tft.width()/2, tft.height()/2-(BUTTON_HEIGHT/2), 4);
             break;
         case BREWING:
             tft.setTextColor(MOSTLY_WHITE, BKGD);
