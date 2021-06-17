@@ -22,3 +22,4 @@ MkII as of this writing is not complete. However, you are more than welcome to g
 
 Current schematic is below (keep in mind I'm focused on the software at the moment and have already used the missing assorted hardware on MkI):
 ![Schematic](https://github.com/mpboddie/TipsyBrewPourOver/blob/mkII-ESP32/schematics/PORmkII.png)
+The 10μF capacitor that is bridging GND and 3.3v may not be necessary, but for some ESP32 boards it will prevent the brownout error. The resistor on the DS18B20 is 4.7k Ω.
