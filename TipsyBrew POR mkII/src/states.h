@@ -22,7 +22,7 @@ struct AppValues {
   struct tm timeinfo;
   WifiStates wifiState;
   String ipAddress;
-  double kettleTemp;
+  float kettleTemp;
   bool kettleChange;
   bool kettleState;
   bool screenRefresh;
@@ -30,6 +30,9 @@ struct AppValues {
   bool preheatStatus;
   long activityTimer;
   long safetyTimer;
+  float coneWeight;
+  float potWeight;
+  bool weightChange;
 };
 
 #endif

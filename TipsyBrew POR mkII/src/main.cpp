@@ -11,6 +11,7 @@
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <HX711.h>
 
 #include "config/pins.h"
 #include "config/userSettings.h"
@@ -21,6 +22,7 @@
 #include "tasks/display.h"
 #include "tasks/ntpTime.h"
 #include "tasks/kettleTemp.h"
+#include "tasks/weights.h"
 
 // Which core is Arduino running on
 #if CONFIG_FREERTOS_UNICORE
@@ -62,6 +64,8 @@ void setup(void) {
   appState.screenRefresh = false;
   appState.preheatStatus = false;
   appState.activityTimer = millis();
+  appState.coneWeight = 0.0;
+  appState.potWeight = 0.0;
 
   // Setup the LCD
   tft.begin();
@@ -72,7 +76,17 @@ void setup(void) {
   // Calibrate the touch screen and retrieve the scaling factors
   touch_calibrate();
 
+  // Initialize the weight sensors
+  /*coneScale.begin(CONE_LOADCELL_DOUT_PIN, CONE_LOADCELL_SCK_PIN);
+  coneScale.set_scale(cone_calibration_factor);
+  coneScale.tare();
+
+  potScale.begin(POT_LOADCELL_DOUT_PIN, POT_LOADCELL_SCK_PIN);
+  potScale.set_scale(pot_calibration_factor);
+  potScale.tare();*/
+
   Serial.begin(115200);
+  Serial.println("TipsyBrew started");
 
   if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
@@ -119,6 +133,15 @@ void setup(void) {
     3,                // Task priority
     NULL              // Task handle
   );
+
+/*  xTaskCreate(
+    updateWeights,
+    "UpdateWeights", // Task name
+    5000,             // Stack size (bytes)
+    NULL,             // Parameter
+    5,                // Task priority
+    NULL              // Task handle
+  );*/
 }
 
 void loop(void) {

@@ -190,6 +190,8 @@ void updateDisplay(void * parameter){
                     clearContentArea();
                     drawScreenLabel();
                     initCoffee();
+                } else {
+                    coffeeBeat();
                 }
 
                 if (tft.getTouch(&x, &y))

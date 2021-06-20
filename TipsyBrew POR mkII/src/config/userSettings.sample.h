@@ -32,4 +32,8 @@ const char *tbVersion =         "Mark II v0.1";
 const int   preheatTimeout =        1800000;
 const int   brewingTimeout =        1800000;
 
+// TODO: These scale calibration values should be added to either a calibration process or at least the settings page
+#define cone_calibration_factor 1695.0
+#define pot_calibration_factor 1695.0
+
 #endif
