@@ -93,6 +93,7 @@ void coffeeTouch(int x, int y) {
                 // Bottom Right (Continue with Brew)
                 currCoffeePage = WEIGH;
                 appState.screenRefresh = true;
+                appState.tareMsg = TARE_ALL;
                 appState.weightChange = true;
             };
             break;

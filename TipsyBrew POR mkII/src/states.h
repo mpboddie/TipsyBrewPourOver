@@ -17,6 +17,14 @@ enum WifiStates
   WIFI_CONNECTED
 };
 
+enum TareMsg
+{
+  TARE_CONE,
+  TARE_POT,
+  TARE_ALL,
+  NONE
+};
+
 struct AppValues {
   AppModeValues currentScreen;
   struct tm timeinfo;
@@ -33,6 +41,7 @@ struct AppValues {
   float coneWeight;
   float potWeight;
   bool weightChange;
+  TareMsg tareMsg;
 };
 
 #endif
