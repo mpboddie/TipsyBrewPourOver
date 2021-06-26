@@ -21,5 +21,5 @@ MkII will be TipsyBrew POR's first release.
 MkII as of this writing is not complete. However, you are more than welcome to give the code a spin. You will need an ESP32 and an SPI LCD touchscreen using the ILI9341 driver. I believe most of the screens of that type are 320x240 and things will probably work best if you stick with that. The screen I am using at the moment is 2.8 inches, but that has no bearing on get the code running.
 
 Current schematic is below (keep in mind I'm focused on the software at the moment and have already used the missing assorted hardware on MkI):
-![Schematic](https://github.com/mpboddie/TipsyBrewPourOver/blob/mkII-ESP32/schematics/PORmkII.png)
+![Schematic](https://github.com/mpboddie/TipsyBrewPourOver/blob/mkII-ESP32/schematics/PORmkII_scales.png)
 The 10μF capacitor that is bridging GND and 3.3v may not be necessary, but for some ESP32 boards it will prevent the brownout error. The resistor on the DS18B20 is 4.7k Ω.
