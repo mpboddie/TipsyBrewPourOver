@@ -33,6 +33,12 @@ void updateKettleTemp(void * parameter){
                     // TODO: turn off the kettle
                 }
             }
+        } else if(appState.preheatStatus == false) {
+            // pre-heat has been turned off, turn of the kettle if it's currently on
+            if(appState.kettleState) {
+                appState.kettleState = false;
+                // TODO: turn on the kettle
+            }
         } else if(appState.currentScreen == APP_COFFEE) {
             if(appState.kettleTemp < (coffeeSettings.brewTempTarget - 1) && !appState.kettleState) {
                 // brewing is active, the kettle is a bit cool and the kettle is currently off
