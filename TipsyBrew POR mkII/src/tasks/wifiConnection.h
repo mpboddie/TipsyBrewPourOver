@@ -13,7 +13,7 @@ void keepWiFiAlive(void * parameter){
             continue;
         }
 
-        Serial.println("[WIFI] Connecting");
+        Serial.println(F("[WIFI] Connecting"));
         appState.wifiState = WIFI_CONNECTING;
         WiFi.mode(WIFI_STA);
         WiFi.setHostname(HOSTNAME);
@@ -30,13 +30,13 @@ void keepWiFiAlive(void * parameter){
         // When we couldn't make a WiFi connection (or the timeout expired)
 		  // sleep for a while and then retry.
         if(WiFi.status() != WL_CONNECTED){
-            Serial.println("[WIFI] FAILED");
+            Serial.println(F("[WIFI] FAILED"));
             appState.wifiState = WIFI_DISCONNECTED;
             vTaskDelay(WIFI_RECOVER_TIME_MS / portTICK_PERIOD_MS);
 			  continue;
         }
 
-        Serial.print("[WIFI] Connected: ");
+        Serial.print(F("[WIFI] Connected: "));
         Serial.println(WiFi.localIP());
         appState.wifiState = WIFI_CONNECTED;
         appState.ipAddress = WiFi.localIP().toString();

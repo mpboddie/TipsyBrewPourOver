@@ -57,9 +57,11 @@ void coffeeBeat() {
         case PREPARE:
             // Nothing to do here
             break;
-        case WEIGH:
+        case WEIGH: {
             // Update weights
             if(appState.weightChange) {
+                //Serial.println(F("Weight change")); //Debug statement
+                //Serial.println(coneScale.read());
                 appState.weightChange = false;
                 tft.fillRect(55, tft.height()/2+5+tft.fontHeight(2), tft.width()-110, tft.fontHeight(4), BKGD);
                 tft.fillRect(55, tft.height()-25-tft.fontHeight(4), tft.width()-110, tft.fontHeight(4), BKGD);
@@ -73,6 +75,7 @@ void coffeeBeat() {
                 tft.drawString(str, tft.width()/2, tft.height()-25-tft.fontHeight(4), 4);          
             }
             break;
+        }
     }
 }
 
@@ -94,7 +97,6 @@ void coffeeTouch(int x, int y) {
                 currCoffeePage = WEIGH;
                 appState.screenRefresh = true;
                 appState.tareMsg = TARE_ALL;
-                appState.weightChange = true;
             };
             break;
         case WEIGH:

@@ -81,17 +81,26 @@ void setup(void) {
   touch_calibrate();
 
   Serial.begin(115200);
-  Serial.println("TipsyBrew started");
+  Serial.println(F("[MAIN]TipsyBrew started"));
 
-  if(!SPIFFS.begin(true)){
+  /* if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
-  }
+  } */
+
+  /*coneScale.begin(CONE_LOADCELL_DOUT_PIN, CONE_LOADCELL_SCK_PIN);
+  coneScale.set_scale(cone_calibration_factor);
+  Serial.println(coneScale.read());*/
+  initScales();
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
-  loadCoffeeSettings(filename, coffeeSettings);
-  
+  if(!loadCoffeeSettings(filename, coffeeSettings)) {
+    saveCoffeeSettings(filename, coffeeSettings);
+  }
+  Serial.print(F("[MAIN]Settings file dump: "));
+  printFile(filename);
+
   xTaskCreatePinnedToCore(
     keepWiFiAlive,
     "keepWiFiAlive",  // Task name
@@ -129,14 +138,14 @@ void setup(void) {
     NULL              // Task handle
   );
 
-/*  xTaskCreate(
+  xTaskCreate(
     updateWeights,
     "UpdateWeights", // Task name
     5000,             // Stack size (bytes)
     NULL,             // Parameter
-    5,                // Task priority
+    3,                // Task priority
     NULL              // Task handle
-  );*/
+  );
 }
 
 void loop(void) {

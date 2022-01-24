@@ -38,8 +38,8 @@ struct AppValues {
   bool preheatStatus;
   long activityTimer;
   long safetyTimer;
-  float coneWeight;
-  float potWeight;
+  long coneWeight;
+  long potWeight;
   bool weightChange;
   TareMsg tareMsg;
 };

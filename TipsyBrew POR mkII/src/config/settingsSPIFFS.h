@@ -14,32 +14,6 @@ struct CoffeeSettings {
 const char *filename = "/settings.json"; 
 CoffeeSettings coffeeSettings;
 
-// Loads the configuration from a file
-void loadCoffeeSettings(const char *filename, CoffeeSettings &coffeeSettings) {
-
-  File file = SPIFFS.open(filename, "r");
-
-  // Allocate a temporary JsonDocument
-  // Don't forget to change the capacity to match your requirements.
-  // Use https://arduinojson.org/v6/assistant to compute the capacity.
-  StaticJsonDocument<512> doc;
-
-  // Deserialize the JSON document
-  DeserializationError error = deserializeJson(doc, file);
-  if (error)
-    Serial.println(F("Failed to read file, using default configuration"));
-
-  // Copy values from the JsonDocument to the Config
-  coffeeSettings.preheatTarget = doc["preheat"] | 80;
-  //strlcpy(config.hostname,                  // <- destination
-  //        doc["hostname"] | "example.com",  // <- source
-  //        sizeof(config.hostname));         // <- destination's capacity
-  coffeeSettings.brewTempTarget = doc["brewTemp"] | 100;
-  coffeeSettings.coffeeRatio = doc["ratio"] | 16;
-
-  file.close();
-}
-
 // Saves the configuration to a file
 void saveCoffeeSettings(const char *filename, const CoffeeSettings &coffeeSettings) {
   // Delete existing file, otherwise the configuration is appended to the file
@@ -68,6 +42,45 @@ void saveCoffeeSettings(const char *filename, const CoffeeSettings &coffeeSettin
   }
 
   file.close();
+}
+
+// Loads the configuration from a file
+bool loadCoffeeSettings(const char *filename, CoffeeSettings &coffeeSettings) {
+  
+  // Default values in case of loading errors
+  coffeeSettings.preheatTarget = 80;
+  coffeeSettings.brewTempTarget = 100;
+  coffeeSettings.coffeeRatio = 16;
+
+  File file = SPIFFS.open(filename, "r");
+  
+  if(!file){
+    Serial.println(F("Failed to open settings file"));
+    return false;
+  }
+
+  // Allocate a temporary JsonDocument
+  // Don't forget to change the capacity to match your requirements.
+  // Use https://arduinojson.org/v6/assistant to compute the capacity.
+  StaticJsonDocument<512> doc;
+
+  // Deserialize the JSON document
+  DeserializationError error = deserializeJson(doc, file);
+  if (error){
+    Serial.println(F("Failed to read file, using default configuration"));
+    return false;
+  }
+
+  // Copy values from the JsonDocument to the Config
+  coffeeSettings.preheatTarget = doc["preheat"] | 80;
+  //strlcpy(config.hostname,                  // <- destination
+  //        doc["hostname"] | "example.com",  // <- source
+  //        sizeof(config.hostname));         // <- destination's capacity
+  coffeeSettings.brewTempTarget = doc["brewTemp"] | 100;
+  coffeeSettings.coffeeRatio = doc["ratio"] | 16;
+
+  file.close();
+  return true;
 }
 
 // Prints the content of a file to the Serial
