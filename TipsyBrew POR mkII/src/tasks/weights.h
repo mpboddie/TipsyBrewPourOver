@@ -10,26 +10,29 @@ HX711 coneScale;
 HX711 potScale;
 
 void tareCone() {
-    coneScale.tare();
-    appState.weightChange = true;
+    if (coneScale.wait_ready_timeout(100)) {
+        coneScale.tare();
+        appState.weightChange = true;
+    }
 }
 
 void tarePot() {
-    potScale.tare();
-    appState.weightChange = true;
+    if (potScale.wait_ready_timeout(100)) {
+        potScale.tare();
+        appState.weightChange = true;
+    }
 }
 
 void tareAll() {
-    tareCone();
+    tareCone(); 
     tarePot();
-    appState.weightChange = true;
 }
 
 void initScales() {
     coneScale.begin(CONE_LOADCELL_DOUT_PIN, CONE_LOADCELL_SCK_PIN);
     coneScale.set_scale(cone_calibration_factor);
-    //potScale.begin(POT_LOADCELL_DOUT_PIN, POT_LOADCELL_SCK_PIN);
-    //potScale.set_scale(pot_calibration_factor);
+    potScale.begin(POT_LOADCELL_DOUT_PIN, POT_LOADCELL_SCK_PIN);
+    potScale.set_scale(pot_calibration_factor);
 
     if (coneScale.wait_ready_timeout(100)) {
         Serial.println(coneScale.read());
@@ -37,7 +40,13 @@ void initScales() {
         Serial.println(F("[WEIGHTS]Cone scale not found."));
     }
 
-    //tareAll();
+    if (potScale.wait_ready_timeout(100)) {
+        Serial.println(potScale.read());
+    } else {
+        Serial.println(F("[WEIGHTS]Pot scale not found."));
+    }
+
+    tareAll();
 }
 
 void updateWeights(void * parameter) {
@@ -67,17 +76,24 @@ void updateWeights(void * parameter) {
                 } else {
                     coneWeight = 0;
                 }
-                //long potWeight = potScale.read();
+                long potWeight = 0;
+                if (potScale.wait_ready_timeout(100)) {
+                    potWeight = potScale.read();
+                } else {
+                    potWeight = 0;
+                }
                 if(abs(coneWeight - appState.coneWeight) > 0.2) {
                     Serial.print(F("[WEIGHTS]cone changed: "));
                     Serial.println(appState.coneWeight);
                     appState.weightChange = true;
                     appState.coneWeight = coneWeight;
                 }
-                /*if(abs(potWeight - appState.potWeight) > 0.2) {
+                if(abs(potWeight - appState.potWeight) > 0.2) {
+                    Serial.print(F("[WEIGHTS]pot changed: "));
+                    Serial.println(appState.potWeight);
                     appState.weightChange = true;
                     appState.potWeight = potWeight;
-                }*/
+                }
                 break;
             }
         }
