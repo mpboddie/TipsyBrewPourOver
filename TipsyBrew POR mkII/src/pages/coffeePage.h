@@ -60,8 +60,6 @@ void coffeeBeat() {
         case WEIGH: {
             // Update weights
             if(appState.weightChange) {
-                //Serial.println(F("Weight change")); //Debug statement
-                //Serial.println(coneScale.read());
                 appState.weightChange = false;
                 tft.fillRect(55, tft.height()/2+5+tft.fontHeight(2), tft.width()-110, tft.fontHeight(4), BKGD);
                 tft.fillRect(55, tft.height()-25-tft.fontHeight(4), tft.width()-110, tft.fontHeight(4), BKGD);
