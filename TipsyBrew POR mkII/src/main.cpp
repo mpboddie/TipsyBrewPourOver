@@ -83,14 +83,6 @@ void setup(void) {
   Serial.begin(115200);
   Serial.println(F("[MAIN]TipsyBrew started"));
 
-  /* if(!SPIFFS.begin(true)){
-    Serial.println("An Error has occurred while mounting SPIFFS");
-    return;
-  } */
-
-  /*coneScale.begin(CONE_LOADCELL_DOUT_PIN, CONE_LOADCELL_SCK_PIN);
-  coneScale.set_scale(cone_calibration_factor);
-  Serial.println(coneScale.read());*/
   initScales();
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
@@ -98,8 +90,12 @@ void setup(void) {
   if(!loadCoffeeSettings(filename, coffeeSettings)) {
     saveCoffeeSettings(filename, coffeeSettings);
   }
-  Serial.print(F("[MAIN]Settings file dump: "));
-  printFile(filename);
+  // Uncomment next two lines for debugging settings file issues
+  //Serial.print(F("[MAIN]Settings file dump: "));
+  //printFile(filename);
+
+  pinMode(PUMP_STEP_PIN, OUTPUT);
+	pinMode(PUMP_DIR_PIN, OUTPUT);
 
   xTaskCreatePinnedToCore(
     keepWiFiAlive,
