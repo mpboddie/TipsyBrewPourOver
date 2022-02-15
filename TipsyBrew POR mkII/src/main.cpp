@@ -12,6 +12,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <HX711.h>
+#include <AccelStepper.h>
 
 #include "config/pins.h"
 #include "config/userSettings.h"
@@ -23,6 +24,7 @@
 #include "tasks/display.h"
 #include "tasks/ntpTime.h"
 #include "tasks/kettleTemp.h"
+#include "tasks/motors.h"
 
 // Which core is Arduino running on
 #if CONFIG_FREERTOS_UNICORE
@@ -41,6 +43,8 @@ TFT_eSPI tft = TFT_eSPI();
 OneWire oneWire(ONE_WIRE);
 DallasTemperature sensors(&oneWire);
 
+AccelStepper pumpMotor(PUMP_INTERFACE_TYPE, PUMP_STEP_PIN, PUMP_DIR_PIN);
+
 // This is the file name used to store the calibration data
 // You can change this to create new calibration files.
 // The SPIFFS file name must start with "/".
@@ -54,7 +58,7 @@ DallasTemperature sensors(&oneWire);
 void touch_calibrate();
 
 void setup(void) {
-  pinMode( 0, OUTPUT );
+  pinMode(0, OUTPUT);
   digitalWrite(0, HIGH);
 
   appState.currentScreen = APP_INTRO_SCREEN;
@@ -70,6 +74,9 @@ void setup(void) {
   appState.coneWeight = 0.0;
   appState.potWeight = 0.0;
   appState.tareMsg = TARE_ALL;
+  appState.pumpSpeed = 200;
+  appState.pumpAccel = 50;
+  appState.pumpState = false;
 
   // Setup the LCD
   tft.begin();
@@ -94,8 +101,10 @@ void setup(void) {
   //Serial.print(F("[MAIN]Settings file dump: "));
   //printFile(filename);
 
-  pinMode(PUMP_STEP_PIN, OUTPUT);
-	pinMode(PUMP_DIR_PIN, OUTPUT);
+  pumpMotor.setMaxSpeed(1000);
+	pumpMotor.setAcceleration(appState.pumpAccel);
+	pumpMotor.setSpeed(appState.pumpSpeed);
+	pumpMotor.moveTo(200);
 
   xTaskCreatePinnedToCore(
     keepWiFiAlive,
@@ -136,12 +145,22 @@ void setup(void) {
 
   xTaskCreate(
     updateWeights,
-    "UpdateWeights", // Task name
+    "UpdateWeights",  // Task name
     5000,             // Stack size (bytes)
     NULL,             // Parameter
     3,                // Task priority
     NULL              // Task handle
   );
+
+  xTaskCreate(
+    updateMotors,
+    "UpdateMotors",   // Task name
+    5000,             // Stack size (bytes)
+    NULL,             // Parameter
+    3,                // Task priority
+    NULL              // Task handle
+  );
+
 }
 
 void loop(void) {

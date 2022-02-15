@@ -42,6 +42,9 @@ struct AppValues {
   long potWeight;
   bool weightChange;
   TareMsg tareMsg;
+  bool pumpState;
+  float pumpSpeed;
+  float pumpAccel;
 };
 
 #endif
