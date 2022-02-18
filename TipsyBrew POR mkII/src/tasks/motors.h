@@ -8,7 +8,10 @@ extern AppValues appState;
 extern AccelStepper pumpMotor;
 
 void updateMotors(void * parameter){
-
+    for(;;){
+        
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
 }
 
 #endif
